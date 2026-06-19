@@ -373,6 +373,32 @@ textarea {
     background: #f6f1ea;
 }
 
+.adminLogin {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.adminLoginCard {
+    width: min(100%, 420px);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    backdrop-filter: blur(18px);
+}
+
+.adminLoginCard h1 {
+    margin: 8px 0 20px;
+    font-size: clamp(2.8rem, 14vw, 4.4rem);
+}
+
+.adminShell.locked {
+    display: none;
+}
+
 .adminShell {
     width: min(1440px, 100%);
     margin: 0 auto;
@@ -391,9 +417,18 @@ textarea {
     font-size: 3.4rem;
 }
 
+.logoutButton {
+    min-height: 42px;
+    border-radius: 8px;
+    background: rgba(36, 29, 31, 0.08);
+    color: var(--ink);
+    padding: 0 14px;
+    font-weight: 900;
+}
+
 .scoreStrip {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr;
+    grid-template-columns: 1fr 1fr 1.2fr auto;
     gap: 10px;
     min-width: min(620px, 100%);
 }

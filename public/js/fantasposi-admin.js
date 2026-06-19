@@ -4,11 +4,19 @@
         io();
 
     let state = null;
+    const ADMIN_SESSION_KEY =
+        "fantasposiAdminPassword";
 
     const $ = id =>
         document.getElementById(id);
 
     const els = {
+        adminLogin: $("adminLogin"),
+        adminLoginForm: $("adminLoginForm"),
+        adminPassword: $("adminPassword"),
+        adminLoginHint: $("adminLoginHint"),
+        adminShell: $("adminShell"),
+        adminLogout: $("adminLogout"),
         adminBrideLabel: $("adminBrideLabel"),
         adminGroomLabel: $("adminGroomLabel"),
         adminBrideScore: $("adminBrideScore"),
@@ -71,6 +79,8 @@
         awardsList: $("awardsList")
     };
 
+    els.adminLoginForm.addEventListener("submit", unlockAdmin);
+    els.adminLogout.addEventListener("click", lockAdmin);
     els.saveEvent.addEventListener("click", saveEvent);
     els.resetGame.addEventListener("click", resetGame);
     els.addTable.addEventListener("click", addTable);
@@ -86,6 +96,12 @@
     els.launchChallenge.addEventListener("click", launchChallenge);
     els.openQuizDialog.addEventListener("click", openQuizDialog);
     els.launchQuiz.addEventListener("click", launchQuiz);
+
+    if (adminPassword()) {
+        setAdminUnlocked(true);
+    } else {
+        setAdminUnlocked(false);
+    }
 
     socket.on("fantasposi:state", nextState => {
         state = nextState;
@@ -106,6 +122,69 @@
             els.guestUrl.href = info.guestUrl;
             els.guestUrl.textContent = info.guestUrl;
         });
+
+    function adminPassword() {
+
+        return sessionStorage.getItem(ADMIN_SESSION_KEY) || "";
+
+    }
+
+    function setAdminUnlocked(unlocked) {
+
+        els.adminLogin.classList.toggle("hidden", unlocked);
+        els.adminShell.classList.toggle("locked", !unlocked);
+
+        if (!unlocked) {
+            els.adminPassword.focus();
+        }
+
+    }
+
+    function unlockAdmin(event) {
+
+        event.preventDefault();
+
+        const password =
+            els.adminPassword.value;
+
+        fetch(
+            "/api/fantasposi/admin-login",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    password
+                })
+            }
+        )
+            .then(response => response.json())
+            .then(data => {
+                if (!data || !data.ok) {
+                    els.adminLoginHint.textContent =
+                        "Password non corretta.";
+                    return;
+                }
+
+                sessionStorage.setItem(ADMIN_SESSION_KEY, password);
+                els.adminPassword.value = "";
+                els.adminLoginHint.textContent = "";
+                setAdminUnlocked(true);
+            })
+            .catch(() => {
+                els.adminLoginHint.textContent =
+                    "Non riesco a verificare la password.";
+            });
+
+    }
+
+    function lockAdmin() {
+
+        sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        setAdminUnlocked(false);
+
+    }
 
     function render() {
 
@@ -462,13 +541,11 @@
 
     function switchParticipantTeam(participantId, team) {
 
-        fetch(
+        adminRequest(
             `/api/fantasposi/participants/${participantId}`,
             {
                 method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: jsonHeaders(),
                 body: JSON.stringify({
                     team
                 })
@@ -780,7 +857,7 @@
 
         els.quizLibraryBox.querySelectorAll("[data-delete-quiz]").forEach(button => {
             button.addEventListener("click", () => {
-                fetch(
+                adminRequest(
                     `/api/fantasposi/quizzes/${button.dataset.deleteQuiz}`,
                     {
                         method: "DELETE"
@@ -1036,7 +1113,7 @@
 
     function deleteTable(tableId) {
 
-        fetch(
+        adminRequest(
             `/api/fantasposi/tables/${tableId}`,
             {
                 method: "DELETE"
@@ -1073,13 +1150,11 @@
 
     function post(url, payload) {
 
-        return fetch(
+        return adminRequest(
             url,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: jsonHeaders(),
                 body: JSON.stringify(payload)
             }
         )
@@ -1095,6 +1170,37 @@
                 }
                 return data;
             });
+
+    }
+
+    function adminRequest(url, options = {}) {
+
+        const headers = {
+            ...(options.headers || {}),
+            "X-Fantasposi-Admin-Password": adminPassword()
+        };
+
+        return fetch(
+            url,
+            {
+                ...options,
+                headers
+            }
+        ).then(response => {
+            if (response.status === 401) {
+                lockAdmin();
+                window.alert("Password admin richiesta o non valida.");
+            }
+            return response;
+        });
+
+    }
+
+    function jsonHeaders() {
+
+        return {
+            "Content-Type": "application/json"
+        };
 
     }
 

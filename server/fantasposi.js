@@ -452,6 +452,23 @@ function installFantasposi(app, io) {
 
     const state =
         loadState();
+    const adminPassword =
+        process.env.FANTASPOSI_ADMIN_PASSWORD || "admin1234@1234";
+
+    function requireAdmin(req, res, next) {
+
+        const provided =
+            String(req.get("x-fantasposi-admin-password") || "");
+
+        if (provided !== adminPassword) {
+            return res.status(401).json({
+                error: "Password admin non valida"
+            });
+        }
+
+        next();
+
+    }
 
     recalculateScores(state);
     saveState(state);
@@ -490,7 +507,18 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/event", (req, res) => {
+    app.post("/api/fantasposi/admin-login", (req, res) => {
+
+        const body =
+            safeObject(req.body);
+
+        res.json({
+            ok: String(body.password || "") === adminPassword
+        });
+
+    });
+
+    app.post("/api/fantasposi/event", requireAdmin, (req, res) => {
 
         const body =
             safeObject(req.body);
@@ -525,7 +553,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/reset-game", (req, res) => {
+    app.post("/api/fantasposi/reset-game", requireAdmin, (req, res) => {
 
         state.tables = [];
         state.participants = [];
@@ -554,7 +582,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/tables", (req, res) => {
+    app.post("/api/fantasposi/tables", requireAdmin, (req, res) => {
 
         const name =
             cleanText(req.body && req.body.name);
@@ -587,7 +615,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.patch("/api/fantasposi/tables/:id", (req, res) => {
+    app.patch("/api/fantasposi/tables/:id", requireAdmin, (req, res) => {
 
         const table =
             findTable(state, req.params.id);
@@ -607,7 +635,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.delete("/api/fantasposi/tables/:id", (req, res) => {
+    app.delete("/api/fantasposi/tables/:id", requireAdmin, (req, res) => {
 
         const table =
             findTable(state, req.params.id);
@@ -708,7 +736,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.patch("/api/fantasposi/participants/:id", (req, res) => {
+    app.patch("/api/fantasposi/participants/:id", requireAdmin, (req, res) => {
 
         const participant =
             state.participants.find(item =>
@@ -737,7 +765,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/awards", (req, res) => {
+    app.post("/api/fantasposi/awards", requireAdmin, (req, res) => {
 
         const body =
             safeObject(req.body);
@@ -797,7 +825,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/awards/:id/void", (req, res) => {
+    app.post("/api/fantasposi/awards/:id/void", requireAdmin, (req, res) => {
 
         const award =
             state.awards.find(item =>
@@ -818,7 +846,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/challenges", (req, res) => {
+    app.post("/api/fantasposi/challenges", requireAdmin, (req, res) => {
 
         const body =
             safeObject(req.body);
@@ -843,7 +871,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/challenges/:id/close", (req, res) => {
+    app.post("/api/fantasposi/challenges/:id/close", requireAdmin, (req, res) => {
 
         const challenge =
             state.challenges.find(item =>
@@ -909,7 +937,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/claims/:id/approve", (req, res) => {
+    app.post("/api/fantasposi/claims/:id/approve", requireAdmin, (req, res) => {
 
         const claim =
             state.claims.find(item =>
@@ -965,7 +993,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/claims/:id/reject", (req, res) => {
+    app.post("/api/fantasposi/claims/:id/reject", requireAdmin, (req, res) => {
 
         const claim =
             state.claims.find(item =>
@@ -985,7 +1013,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/quizzes", (req, res) => {
+    app.post("/api/fantasposi/quizzes", requireAdmin, (req, res) => {
 
         const body =
             safeObject(req.body);
@@ -1045,7 +1073,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/quizzes/draft", (req, res) => {
+    app.post("/api/fantasposi/quizzes/draft", requireAdmin, (req, res) => {
 
         const body =
             safeObject(req.body);
@@ -1098,7 +1126,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/quizzes/:id/launch", (req, res) => {
+    app.post("/api/fantasposi/quizzes/:id/launch", requireAdmin, (req, res) => {
 
         const quiz =
             state.quizzes.find(item =>
@@ -1208,7 +1236,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.post("/api/fantasposi/quizzes/:id/close", (req, res) => {
+    app.post("/api/fantasposi/quizzes/:id/close", requireAdmin, (req, res) => {
 
         const quiz =
             state.quizzes.find(item =>
@@ -1230,7 +1258,7 @@ function installFantasposi(app, io) {
 
     });
 
-    app.delete("/api/fantasposi/quizzes/:id", (req, res) => {
+    app.delete("/api/fantasposi/quizzes/:id", requireAdmin, (req, res) => {
 
         const quizId =
             Number(req.params.id);

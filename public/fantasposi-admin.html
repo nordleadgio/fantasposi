@@ -10,7 +10,23 @@
 <link rel="stylesheet" href="/css/fantasposi.css">
 </head>
 <body class="adminBody">
-<main class="adminShell">
+<section class="adminLogin" id="adminLogin">
+    <form class="adminLoginCard" id="adminLoginForm">
+        <div class="eventKicker">Accesso regia</div>
+        <h1>Fantasposi</h1>
+        <label>Password admin
+            <input
+                id="adminPassword"
+                type="password"
+                autocomplete="current-password"
+                placeholder="Inserisci password">
+        </label>
+        <button class="primaryButton" type="submit">Entra nel pannello</button>
+        <div class="hint" id="adminLoginHint"></div>
+    </form>
+</section>
+
+<main class="adminShell locked" id="adminShell">
     <header class="adminHeader">
         <div>
             <div class="eventKicker">Pannello di regia</div>
@@ -30,6 +46,7 @@
                 <strong id="topTableScore">0</strong>
                 <small id="topTableName">Nessun tavolo</small>
             </div>
+            <button class="logoutButton" id="adminLogout" type="button">Esci</button>
         </div>
     </header>
 
