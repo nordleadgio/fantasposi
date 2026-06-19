@@ -30,6 +30,21 @@ const io = new Server(server);
 const publicScreenSettings =
     loadPublicScreenSettings();
 
+function sendPublicFile(res, fileName) {
+
+    res.setHeader(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate"
+    );
+    res.sendFile(
+        path.join(
+            PUBLIC_FOLDER,
+            fileName
+        )
+    );
+
+}
+
 if (!fs.existsSync(MUSIC_FOLDER)) {
 
     fs.mkdirSync(
@@ -52,6 +67,37 @@ const playerState = {
 };
 
 app.use(express.json({ limit: "2mb" }));
+
+app.get(["/fantasposi.html", "/invitati"], (req, res) => {
+
+    sendPublicFile(res, "fantasposi.html");
+
+});
+
+app.get(["/fantasposi-admin.html", "/admin"], (req, res) => {
+
+    sendPublicFile(res, "fantasposi-admin.html");
+
+});
+
+app.get("/css/fantasposi.css", (req, res) => {
+
+    sendPublicFile(res, "css/fantasposi.css");
+
+});
+
+app.get("/js/fantasposi.js", (req, res) => {
+
+    sendPublicFile(res, "js/fantasposi.js");
+
+});
+
+app.get("/js/fantasposi-admin.js", (req, res) => {
+
+    sendPublicFile(res, "js/fantasposi-admin.js");
+
+});
+
 app.use(
     express.static(
         PUBLIC_FOLDER,
