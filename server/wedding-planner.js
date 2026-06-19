@@ -4,6 +4,9 @@ const os = require("os");
 const crypto = require("crypto");
 const QRCode = require("qrcode");
 const {
+    Pool
+} = require("pg");
+const {
     APP_FOLDER
 } = require("../shared/paths");
 
@@ -12,6 +15,9 @@ const DATA_FOLDER =
 
 const DATA_FILE =
     path.join(DATA_FOLDER, "schede.json");
+
+const DATABASE_URL =
+    process.env.DATABASE_URL || "";
 
 function createInitialState() {
 
@@ -624,10 +630,201 @@ function createPdfBuffer(event) {
 
 }
 
-function installWeddingPlanner(app) {
+function createStorage() {
+
+    if (DATABASE_URL) {
+        return createDatabaseStorage();
+    }
+
+    return createFileStorage();
+
+}
+
+function createFileStorage() {
 
     const state =
         loadState();
+
+    return {
+        async init() {
+            saveState(state);
+        },
+        async listEvents() {
+            return state.events;
+        },
+        async nextEventId() {
+            return state.nextIds.event++;
+        },
+        async createEvent(event) {
+            state.events.unshift(event);
+            saveState(state);
+            return event;
+        },
+        async updateEvent(event) {
+            const index =
+                state.events.findIndex(item =>
+                    item.token === event.token
+                );
+
+            if (index !== -1) {
+                state.events[index] =
+                    normalizeEvent(event);
+            }
+
+            saveState(state);
+            return normalizeEvent(event);
+        },
+        async deleteEvent(token) {
+            const index =
+                state.events.findIndex(event =>
+                    event.token === token
+                );
+
+            if (index === -1) {
+                return null;
+            }
+
+            const deleted =
+                state.events.splice(index, 1)[0];
+
+            saveState(state);
+            return deleted;
+        },
+        async findEvent(token) {
+            return findEventByToken(state, token);
+        }
+    };
+
+}
+
+function createDatabaseStorage() {
+
+    const pool =
+        new Pool({
+            connectionString: DATABASE_URL,
+            ssl: {
+                rejectUnauthorized: false
+            }
+        });
+
+    async function query(text, params) {
+        return pool.query(text, params);
+    }
+
+    return {
+        async init() {
+            await query(`
+                CREATE TABLE IF NOT EXISTS wedding_planner_events (
+                    token TEXT PRIMARY KEY,
+                    data JSONB NOT NULL,
+                    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            `);
+        },
+        async listEvents() {
+            const result =
+                await query(`
+                    SELECT data
+                    FROM wedding_planner_events
+                    ORDER BY
+                        COALESCE((data->>'id')::INTEGER, 0) DESC,
+                        updated_at DESC
+                `);
+
+            return result.rows.map(row =>
+                normalizeEvent(row.data)
+            );
+        },
+        async nextEventId() {
+            const result =
+                await query(`
+                    SELECT COALESCE(MAX((data->>'id')::INTEGER), 0) + 1 AS id
+                    FROM wedding_planner_events
+                `);
+
+            return Number(result.rows[0].id) || 1;
+        },
+        async createEvent(event) {
+            const normalized =
+                normalizeEvent(event);
+
+            await query(
+                `
+                    INSERT INTO wedding_planner_events (token, data, created_at, updated_at)
+                    VALUES ($1, $2::jsonb, NOW(), NOW())
+                `,
+                [
+                    normalized.token,
+                    JSON.stringify(normalized)
+                ]
+            );
+
+            return normalized;
+        },
+        async updateEvent(event) {
+            const normalized =
+                normalizeEvent(event);
+
+            const result =
+                await query(
+                    `
+                        UPDATE wedding_planner_events
+                        SET data = $2::jsonb,
+                            updated_at = NOW()
+                        WHERE token = $1
+                        RETURNING data
+                    `,
+                    [
+                        normalized.token,
+                        JSON.stringify(normalized)
+                    ]
+                );
+
+            return result.rows[0] ?
+                normalizeEvent(result.rows[0].data) :
+                null;
+        },
+        async deleteEvent(token) {
+            const result =
+                await query(
+                    `
+                        DELETE FROM wedding_planner_events
+                        WHERE token = $1
+                        RETURNING data
+                    `,
+                    [token]
+                );
+
+            return result.rows[0] ?
+                normalizeEvent(result.rows[0].data) :
+                null;
+        },
+        async findEvent(token) {
+            const result =
+                await query(
+                    `
+                        SELECT data
+                        FROM wedding_planner_events
+                        WHERE token = $1
+                    `,
+                    [token]
+                );
+
+            return result.rows[0] ?
+                normalizeEvent(result.rows[0].data) :
+                null;
+        }
+    };
+
+}
+
+function installWeddingPlanner(app) {
+
+    const storage =
+        createStorage();
+    const storageReady =
+        storage.init();
     const adminPassword =
         process.env.FANTASPOSI_ADMIN_PASSWORD || "admin1234@1234";
 
@@ -646,23 +843,32 @@ function installWeddingPlanner(app) {
 
     }
 
-    app.get("/api/wedding-planner/events", requireAdmin, (req, res) => {
+    app.get("/api/wedding-planner/events", requireAdmin, async (req, res) => {
+
+        await storageReady;
+
+        const events =
+            await storage.listEvents();
 
         res.json(
-            state.events.map(event => withLinks(req, event))
+            events.map(event => withLinks(req, event))
         );
 
     });
 
-    app.post("/api/wedding-planner/events", requireAdmin, (req, res) => {
+    app.post("/api/wedding-planner/events", requireAdmin, async (req, res) => {
+
+        await storageReady;
 
         const body =
             safeObject(req.body);
         const now =
             new Date().toISOString();
+        const id =
+            await storage.nextEventId();
         const event =
             normalizeEvent({
-                id: state.nextIds.event++,
+                id,
                 token: randomToken(),
                 title: cleanText(body.title, "La vostra colonna sonora", 220),
                 groomName: cleanText(body.groomName, "", 120),
@@ -681,16 +887,19 @@ function installWeddingPlanner(app) {
                 `Il matrimonio di ${event.groomName} e ${event.brideName}`.trim();
         }
 
-        state.events.unshift(event);
-        saveState(state);
-        res.json(withLinks(req, event));
+        const created =
+            await storage.createEvent(event);
+
+        res.json(withLinks(req, created));
 
     });
 
-    app.put("/api/wedding-planner/events/:token", requireAdmin, (req, res) => {
+    app.put("/api/wedding-planner/events/:token", requireAdmin, async (req, res) => {
+
+        await storageReady;
 
         const event =
-            findEventByToken(state, req.params.token);
+            await storage.findEvent(req.params.token);
 
         if (!event) {
             return res.status(404).json({
@@ -720,28 +929,26 @@ function installWeddingPlanner(app) {
         event.updatedAt =
             new Date().toISOString();
 
-        saveState(state);
-        res.json(withLinks(req, event));
+        const updated =
+            await storage.updateEvent(event);
+
+        res.json(withLinks(req, updated));
 
     });
 
-    app.delete("/api/wedding-planner/events/:token", requireAdmin, (req, res) => {
+    app.delete("/api/wedding-planner/events/:token", requireAdmin, async (req, res) => {
 
-        const index =
-            state.events.findIndex(event =>
-                event.token === req.params.token
-            );
+        await storageReady;
 
-        if (index === -1) {
+        const deleted =
+            await storage.deleteEvent(req.params.token);
+
+        if (!deleted) {
             return res.status(404).json({
                 error: "Scheda non trovata"
             });
         }
 
-        const deleted =
-            state.events.splice(index, 1)[0];
-
-        saveState(state);
         res.json({
             ok: true,
             token: deleted.token
@@ -749,10 +956,12 @@ function installWeddingPlanner(app) {
 
     });
 
-    app.get("/api/wedding-planner/public/:token", (req, res) => {
+    app.get("/api/wedding-planner/public/:token", async (req, res) => {
+
+        await storageReady;
 
         const event =
-            findEventByToken(state, req.params.token);
+            await storage.findEvent(req.params.token);
 
         if (!event) {
             return res.status(404).json({
@@ -764,10 +973,12 @@ function installWeddingPlanner(app) {
 
     });
 
-    app.post("/api/wedding-planner/public/:token", (req, res) => {
+    app.post("/api/wedding-planner/public/:token", async (req, res) => {
+
+        await storageReady;
 
         const event =
-            findEventByToken(state, req.params.token);
+            await storage.findEvent(req.params.token);
 
         if (!event) {
             return res.status(404).json({
@@ -787,15 +998,19 @@ function installWeddingPlanner(app) {
                 event.updatedAt;
         }
 
-        saveState(state);
-        res.json(publicEvent(event));
+        const updated =
+            await storage.updateEvent(event);
+
+        res.json(publicEvent(updated));
 
     });
 
     app.get("/api/wedding-planner/events/:token/qr", requireAdmin, async (req, res) => {
 
+        await storageReady;
+
         const event =
-            findEventByToken(state, req.params.token);
+            await storage.findEvent(req.params.token);
 
         if (!event) {
             return res.status(404).json({
@@ -818,10 +1033,12 @@ function installWeddingPlanner(app) {
 
     });
 
-    app.get("/api/wedding-planner/events/:token/pdf", requireAdmin, (req, res) => {
+    app.get("/api/wedding-planner/events/:token/pdf", requireAdmin, async (req, res) => {
+
+        await storageReady;
 
         const event =
-            findEventByToken(state, req.params.token);
+            await storage.findEvent(req.params.token);
 
         if (!event) {
             return res.status(404).json({
