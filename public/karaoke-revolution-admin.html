@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin KARAOKE R-EVOLUTION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/karaoke-revolution.css">
+</head>
+<body class="adminPage">
+<main class="adminShell">
+    <section class="loginPanel" id="loginPanel">
+        <div class="brandMark large">
+            <img src="assets/karaoke-revolution-logo.png" alt="KARAOKE R-EVOLUTION">
+        </div>
+        <h1>Area admin</h1>
+        <form id="loginForm" class="adminForm">
+            <label>Password
+                <input id="passwordInput" type="password" autocomplete="current-password" required>
+            </label>
+            <button class="button primary" type="submit">Entra</button>
+            <p class="formMessage" id="loginMessage"></p>
+        </form>
+    </section>
+
+    <section class="adminDashboard hidden" id="adminDashboard">
+        <header class="adminHeader">
+            <div>
+                <p class="eyebrow">Pannello date</p>
+                <h1>KARAOKE R-EVOLUTION</h1>
+            </div>
+            <a class="button ghost" href="/" target="_blank" rel="noreferrer">Apri sito</a>
+        </header>
+
+        <section class="adminBlock">
+            <div class="adminBlockHeader">
+                <div>
+                    <p class="eyebrow">Contatti</p>
+                    <h2>Link pubblici</h2>
+                </div>
+                <button class="button secondary" id="saveSettings" type="button">Salva contatti</button>
+            </div>
+            <div class="formGrid">
+                <label>WhatsApp
+                    <input id="settingsWhatsapp" type="url" placeholder="https://wa.me/39...">
+                </label>
+                <label>Instagram
+                    <input id="settingsInstagram" type="url" placeholder="https://www.instagram.com/...">
+                </label>
+                <label>Email
+                    <input id="settingsEmail" type="email" placeholder="info@karaokerevolution.it">
+                </label>
+                <label>Link app karaoke
+                    <input id="settingsApp" type="text" placeholder="/karaoke.html">
+                </label>
+            </div>
+        </section>
+
+        <section class="adminBlock">
+            <div class="adminBlockHeader">
+                <div>
+                    <p class="eyebrow">Serate</p>
+                    <h2>Aggiungi o modifica evento</h2>
+                </div>
+                <button class="button ghost" id="resetEventForm" type="button">Nuovo evento</button>
+            </div>
+            <form id="eventForm" class="adminForm">
+                <input id="eventId" type="hidden">
+                <div class="formGrid">
+                    <label>Data
+                        <input id="eventDate" type="date" required>
+                    </label>
+                    <label>Ora
+                        <input id="eventTime" type="time" required>
+                    </label>
+                    <label>Locale
+                        <input id="eventVenue" type="text" required>
+                    </label>
+                    <label>Città
+                        <input id="eventCity" type="text" required>
+                    </label>
+                    <label>Indirizzo
+                        <input id="eventAddress" type="text">
+                    </label>
+                    <label>Link Google Maps
+                        <input id="eventMaps" type="url">
+                    </label>
+                    <label>Locandina opzionale
+                        <input id="eventImage" type="url" placeholder="https://...">
+                    </label>
+                    <label class="checkField">
+                        <input id="eventVisible" type="checkbox" checked>
+                        Visibile sul sito
+                    </label>
+                </div>
+                <label>Descrizione breve
+                    <textarea id="eventDescription" rows="3"></textarea>
+                </label>
+                <div class="formActions">
+                    <button class="button primary" type="submit">Salva evento</button>
+                    <button class="button secondary" id="generateRecurring" type="button">Genera ricorrenti</button>
+                </div>
+                <div class="recurringControls" id="recurringControls">
+                    <label>Numero date
+                        <input id="recurringCount" type="number" min="2" max="30" value="4">
+                    </label>
+                    <label>Ogni quanti giorni
+                        <input id="recurringInterval" type="number" min="1" max="31" value="7">
+                    </label>
+                </div>
+            </form>
+            <div class="adminList" id="eventsList"></div>
+        </section>
+
+        <section class="adminBlock">
+            <div class="adminBlockHeader">
+                <div>
+                    <p class="eyebrow">Locali</p>
+                    <h2>Partner</h2>
+                </div>
+                <button class="button ghost" id="resetPartnerForm" type="button">Nuovo locale</button>
+            </div>
+            <form id="partnerForm" class="adminForm">
+                <input id="partnerId" type="hidden">
+                <div class="formGrid">
+                    <label>Nome locale
+                        <input id="partnerName" type="text" required>
+                    </label>
+                    <label>Città
+                        <input id="partnerCity" type="text" required>
+                    </label>
+                    <label>Giorno ricorrente
+                        <input id="partnerDay" type="text" placeholder="Es. ogni venerdi">
+                    </label>
+                    <label>Link Maps
+                        <input id="partnerMaps" type="url">
+                    </label>
+                    <label class="checkField">
+                        <input id="partnerVisible" type="checkbox" checked>
+                        Visibile sul sito
+                    </label>
+                </div>
+                <button class="button primary" type="submit">Salva locale</button>
+            </form>
+            <div class="adminList" id="partnersList"></div>
+        </section>
+    </section>
+</main>
+
+<script src="js/karaoke-revolution-admin.js"></script>
+</body>
+</html>

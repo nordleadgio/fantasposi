@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Schermo Testo</title>
+
+<link rel="stylesheet" href="/css/karaoke.css">
+
+</head>
+<body>
+
+<main class="stage">
+    <section id="videoStage" class="videoStage" hidden>
+        <video id="stageVideo" playsinline muted></video>
+    </section>
+    <section id="cdgStage" class="cdgStage" hidden>
+        <canvas id="cdgCanvas" width="300" height="216"></canvas>
+    </section>
+    <section id="lyrics" class="lyrics">
+        <div class="idle">Giorgio Remote Player</div>
+    </section>
+    <footer id="footer" class="footer"></footer>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="/js/karaoke.js"></script>
+
+</body>
+</html>

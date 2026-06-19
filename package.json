@@ -1,0 +1,34 @@
+{
+  "name": "giorgioremoteplayer",
+  "version": "1.0.0",
+  "description": "Giorgio Remote Player",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "start:web": "node server/server.js",
+    "dist": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Giorgio Strada",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "music-metadata": "^11.13.0",
+    "qrcode": "^1.5.4",
+    "rubberband-web": "^0.2.1",
+    "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "electron": "^42.4.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.giorgio.remoteplayer",
+    "productName": "Giorgio Remote Player",
+    "mac": {
+      "category": "public.app-category.music"
+    }
+  }
+}

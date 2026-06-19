@@ -1,0 +1,13 @@
+.DS_Store
+node_modules/
+dist/
+backups/
+GiorgioKaraokePro/
+*.log
+.env
+.env.*
+
+# Dati locali generati dall'app durante le prove
+Fantasposi/
+playlists/
+music/

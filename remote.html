@@ -1,0 +1,119 @@
+ <!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Giorgio Remote Player</title>
+
+<link rel="stylesheet" href="/css/remote.css?v=remote-lyrics-word-groups-20260618">
+
+</head>
+<body>
+
+<main class="remoteShell">
+
+    <header class="remoteHeader">
+        <div>
+            <h1>Giorgio Remote Player</h1>
+            <div class="subtitle">Telecomando live</div>
+        </div>
+
+        <div id="status" class="stop">
+            STOP
+        </div>
+    </header>
+
+    <section class="nowCard">
+        <div class="eyebrow">Brano attuale</div>
+        <div id="currentSong">
+            Nessun brano
+        </div>
+    </section>
+
+    <nav class="tabBar" aria-label="Sezioni telecomando">
+        <button class="tabButton active" data-tab="livePanel">
+            Live
+        </button>
+        <button class="tabButton" data-tab="playlistPanel">
+            Scaletta
+        </button>
+        <button class="tabButton" data-tab="lyricsPanel">
+            Testo
+        </button>
+    </nav>
+
+    <section id="livePanel" class="tabPanel active">
+        <div class="card">
+            <h3>Controlli</h3>
+
+            <button id="panicStop">
+                PANIC STOP
+            </button>
+
+            <label class="controlLabel" for="volume">
+                Volume
+            </label>
+
+            <input
+                type="range"
+                id="volume"
+                min="0"
+                max="100"
+                value="100">
+        </div>
+
+        <div class="card">
+            <h3>Coda</h3>
+
+            <div id="queue"></div>
+
+            <button id="clearQueue">
+                Svuota Coda
+            </button>
+        </div>
+    </section>
+
+    <section id="lyricsPanel" class="tabPanel">
+        <div class="card lyricsCard">
+            <h3>Testo</h3>
+
+            <div id="lyricsBox">
+
+                <div id="lyricsEmpty">
+                    Nessun testo caricato
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="playlistPanel" class="tabPanel">
+        <div class="card">
+            <h3>Scaletta</h3>
+
+            <div id="playlist"></div>
+        </div>
+    </section>
+
+    <div class="hiddenLibrary">
+        <input
+            type="text"
+            id="search"
+            value="">
+        <h3 id="toggleLibrary">Libreria brani</h3>
+        <div id="libraryContainer">
+            <div id="library"></div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="/js/cdg-renderer.js?v=remote-lyrics-word-groups-20260618"></script>
+
+<script src="/js/remote.js?v=remote-lyrics-word-groups-20260618"></script>
+
+</body>
+</html>

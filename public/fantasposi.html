@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasposi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;700;800&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/fantasposi.css">
+</head>
+<body class="guestBody">
+<main class="guestShell">
+    <section class="guestHero">
+        <div class="eventKicker" id="guestSubtitle">Fantasposi</div>
+        <h1 id="guestTitle">Daniele & Sara</h1>
+        <p id="guestWelcome">Scegli il tuo team e il tuo tavolo.</p>
+    </section>
+
+    <section class="guestPanel" id="joinPanel">
+        <div class="teamGrid">
+            <button class="teamChoice bride" data-team="bride" id="brideTeamButton">
+                Team Sposa
+            </button>
+            <button class="teamChoice groom" data-team="groom" id="groomTeamButton">
+                Team Sposo
+            </button>
+        </div>
+
+        <label class="fieldLabel" for="tableSelect">
+            Tavolo
+        </label>
+        <select id="tableSelect"></select>
+
+        <label class="fieldLabel" for="guestName">
+            Il tuo nome
+        </label>
+        <input id="guestName" type="text" placeholder="Es. Marco">
+
+        <button class="primaryButton" id="joinButton">
+            Entra nel gioco
+        </button>
+        <div class="hint" id="joinMessage"></div>
+    </section>
+
+    <section class="guestPanel hidden" id="homePanel">
+        <div class="identityBox">
+            <span id="identityTeam">Team</span>
+            <strong id="identityTable">Tavolo</strong>
+        </div>
+
+        <div class="guestScores">
+            <div class="guestTeamScores">
+                <div>
+                    <span id="guestBrideTeamLabel">Team Sposa</span>
+                    <strong id="guestBrideScore">0</strong>
+                </div>
+                <div>
+                    <span id="guestGroomTeamLabel">Team Sposo</span>
+                    <strong id="guestGroomScore">0</strong>
+                </div>
+            </div>
+            <div class="guestTableRank">
+                <div class="eventKicker">Classifica tavoli</div>
+                <div id="guestTableScores">
+                    Nessun tavolo in classifica.
+                </div>
+            </div>
+        </div>
+
+        <div class="challengeBox" id="challengeBox">
+            <span>Nessuna Fantasfida attiva</span>
+            <p>Goditi la festa. Le sorprese arrivano quando meno te lo aspetti.</p>
+        </div>
+
+        <div class="hidden" id="activeChallenge">
+            <div class="eventKicker">Fantasfida improvvisa</div>
+            <h2 id="challengeTitle"></h2>
+            <p id="challengeDescription"></p>
+            <div class="reward" id="challengeReward"></div>
+            <div class="hint">
+                Se la compi, fatti notare: il punto lo assegna il conduttore.
+            </div>
+        </div>
+
+        <div class="hidden" id="quizPanel">
+            <div class="eventKicker" id="quizKicker">Quiz live</div>
+            <h2 id="quizQuestionText"></h2>
+            <div id="quizAnswers"></div>
+            <div class="hint" id="quizMessage"></div>
+        </div>
+
+        <div class="latestBox">
+            <div class="eventKicker">Ultima Fantasfida</div>
+            <div id="latestAward">Ancora nessun punto assegnato.</div>
+        </div>
+    </section>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/fantasposi.js"></script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fantasposi Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;700;800&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/fantasposi.css">
+</head>
+<body class="adminBody">
+<main class="adminShell">
+    <header class="adminHeader">
+        <div>
+            <div class="eventKicker">Pannello di regia</div>
+            <h1>Fantasposi</h1>
+        </div>
+        <div class="scoreStrip">
+            <div>
+                <span id="adminBrideLabel">Team Sposa</span>
+                <strong id="adminBrideScore">0</strong>
+            </div>
+            <div>
+                <span id="adminGroomLabel">Team Sposo</span>
+                <strong id="adminGroomScore">0</strong>
+            </div>
+            <div>
+                <span>Miglior tavolo</span>
+                <strong id="topTableScore">0</strong>
+                <small id="topTableName">Nessun tavolo</small>
+            </div>
+        </div>
+    </header>
+
+    <section class="adminSections">
+        <section class="adminSection">
+            <div class="sectionHeader">
+                <div>
+                    <span>Durante la festa</span>
+                    <h2>Regia live</h2>
+                </div>
+                <p>Le due azioni che userai mentre conduci: assegnare punti e lanciare sfide.</p>
+            </div>
+
+            <div class="liveGrid">
+        <article class="adminCard quickCard mainActionCard">
+            <div class="cardHeader">
+                <span>A</span>
+                <div>
+                    <h2>Assegna punti al volo</h2>
+                    <p>Usa questa se succede qualcosa durante la festa.</p>
+                </div>
+            </div>
+
+            <label class="liveField">Che e successo?
+                <input id="awardTitle" type="text" value="" placeholder="Es. applauso piu forte, caduta simpatica, coro improvviso">
+            </label>
+
+            <section class="awardModeBox singleAwardBox">
+                <label>A chi assegni i punti?
+                    <select id="awardTarget">
+                        <option value="">Scegli destinatario</option>
+                        <option value="table">A un tavolo</option>
+                        <option value="bride">A Team Sposa</option>
+                        <option value="groom">A Team Sposo</option>
+                        <option value="both">A entrambi i team</option>
+                    </select>
+                </label>
+
+                <div id="tableAwardFields" class="conditionalFields hidden">
+                    <label>Tavolo da premiare
+                        <select id="awardTable"></select>
+                    </label>
+                    <label>Punti da dare al tavolo
+                        <input id="tablePoints" type="number" value="" placeholder="Es. 20">
+                    </label>
+                    <label class="checkLine">
+                        <input id="applyTableShares" type="checkbox" checked>
+                        Dai anche 1 punto team per ogni iscritto di quel tavolo
+                    </label>
+                </div>
+
+                <div id="singleTeamFields" class="conditionalFields hidden">
+                    <label>Punti da dare al team scelto
+                        <input id="teamPoints" type="number" value="" placeholder="Es. 10">
+                    </label>
+                </div>
+
+                <div id="bothTeamsFields" class="conditionalFields hidden">
+                    <div class="pointsGrid">
+                        <label>Punti Team Sposa
+                            <input id="teamPointsBride" type="number" value="" placeholder="Es. 5">
+                        </label>
+                        <label>Punti Team Sposo
+                            <input id="teamPointsGroom" type="number" value="" placeholder="Es. 5">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="awardSummary" id="awardSummary">
+                    Compila i campi sopra: qui vedrai il riepilogo prima di confermare.
+                </div>
+
+                <button id="confirmAwardButton" class="tableAction largeSoloAction">
+                    Conferma assegnazione
+                </button>
+            </section>
+
+            <input id="awardNote" type="hidden" value="">
+            <input id="awardType" type="hidden" value="manuale">
+        </article>
+
+        <div class="sideLiveStack">
+        <article class="adminCard">
+            <div class="cardHeader">
+                <span>B</span>
+                <div>
+                    <h2>Lancia sfida sugli smartphone</h2>
+                    <p>La sfida appare agli invitati. Il punto lo assegni sempre tu.</p>
+                </div>
+            </div>
+            <label>Titolo della sfida
+                <input id="challengeTitleInput" type="text" placeholder="Brindisi speciale">
+            </label>
+            <label>Cosa devono fare gli invitati
+                <textarea id="challengeDescriptionInput" placeholder="Fai un brindisi con la mamma dello sposo"></textarea>
+            </label>
+            <label>Premio mostrato sul telefono
+                <input id="challengeRewardInput" type="text" value="" placeholder="Es. punti al tavolo e al team">
+            </label>
+            <label>Punti tavolo suggeriti
+                <input id="challengeTablePoints" type="number" value="" placeholder="Li puoi cambiare quando assegni">
+            </label>
+            <input id="challengeTeamPoints" type="hidden" value="0">
+            <button class="primaryButton" id="launchChallenge">Lancia sugli smartphone</button>
+            <div id="activeChallenges"></div>
+        </article>
+
+        <article class="adminCard">
+            <div class="cardHeader">
+                <span>C</span>
+                <div>
+                    <h2>Quiz live</h2>
+                    <p>Domanda a risposta multipla. Gli invitati rispondono dal telefono.</p>
+                </div>
+            </div>
+            <button class="primaryButton" id="openQuizDialog">
+                Nuova domanda
+            </button>
+            <div id="activeQuizBox" class="listBox"></div>
+            <div id="quizLibraryBox" class="listBox"></div>
+        </article>
+        </div>
+            </div>
+        </section>
+
+        <section class="adminSection">
+            <div class="sectionHeader">
+                <div>
+                    <span>Controllo</span>
+                    <h2>Punteggi e storico</h2>
+                </div>
+                <p>Qui controlli tavoli, classifiche e punti gia assegnati.</p>
+            </div>
+
+            <div class="monitorGrid">
+
+        <article class="adminCard">
+            <div class="cardHeader">
+                <span>D</span>
+                <div>
+                    <h2>Tavoli, iscritti e classifica</h2>
+                    <p>Crea i tavoli e controlla chi sta vincendo tra i tavoli.</p>
+                </div>
+            </div>
+            <div class="inlineForm">
+                <input id="newTableName" type="text" placeholder="Nome tavolo">
+                <button id="addTable">Aggiungi</button>
+            </div>
+            <div class="tablePodium" id="tablePodium">
+                Nessun tavolo in classifica.
+            </div>
+            <div id="tablesList" class="listBox"></div>
+        </article>
+
+        <article class="adminCard">
+            <div class="cardHeader">
+                <span>E</span>
+                <div>
+                    <h2>Punti assegnati</h2>
+                    <p>Qui puoi controllare o annullare un punto dato per errore.</p>
+                </div>
+            </div>
+            <div id="awardsList" class="listBox"></div>
+        </article>
+            </div>
+        </section>
+
+        <section class="adminSection">
+            <details class="setupDetails">
+                <summary>
+                    <span>Preparazione</span>
+                    <strong>Matrimonio, grafica, QR e reset</strong>
+                </summary>
+
+        <article class="adminCard eventCard">
+            <div class="cardHeader">
+                <span>F</span>
+                <div>
+                    <h2>Matrimonio e grafica</h2>
+                    <p>Da preparare prima dell'evento.</p>
+                </div>
+            </div>
+            <div class="formGrid">
+                <label>Titolo sul telefono
+                    <input id="eventTitle" type="text">
+                </label>
+                <label>Sottotitolo
+                    <input id="eventSubtitle" type="text">
+                </label>
+                <label>Nome sposa
+                    <input id="brideName" type="text">
+                </label>
+                <label>Nome sposo
+                    <input id="groomName" type="text">
+                </label>
+                <label>Nome Team Sposa
+                    <input id="brideTeamName" type="text">
+                </label>
+                <label>Nome Team Sposo
+                    <input id="groomTeamName" type="text">
+                </label>
+                <label>Font nomi sposi
+                    <select id="titleFont">
+                        <option>Playfair Display</option>
+                        <option>Cormorant Garamond</option>
+                        <option>Libre Baskerville</option>
+                    </select>
+                </label>
+                <label>Font testo
+                    <select id="bodyFont">
+                        <option>Inter</option>
+                    </select>
+                </label>
+                <label>Colore Team Sposa
+                    <input id="brideColor" type="color">
+                </label>
+                <label>Colore Team Sposo
+                    <input id="groomColor" type="color">
+                </label>
+                <label>Colore dettagli
+                    <input id="accentColor" type="color">
+                </label>
+                <label class="wide">Messaggio iniziale sul telefono
+                    <input id="welcome" type="text">
+                </label>
+            </div>
+            <button class="primaryButton" id="saveEvent">Salva matrimonio e grafica</button>
+            <button class="dangerWideButton" id="resetGame">
+                Ricomincia da zero
+            </button>
+            <div class="qrLine">
+                <img id="guestQr" alt="QR Fantasposi">
+                <div>
+                    <span>Link invitati</span>
+                    <a id="guestUrl" href="/fantasposi.html" target="_blank">/fantasposi.html</a>
+                </div>
+            </div>
+        </article>
+            </details>
+        </section>
+    </section>
+
+    <dialog class="quizDialog" id="quizDialog">
+        <form method="dialog" class="quizDialogCard">
+            <div class="cardHeader">
+                <span>Q</span>
+                <div>
+                    <h2>Salva domanda quiz</h2>
+                    <p>La domanda resta pronta e potrai lanciarla quando vuoi.</p>
+                </div>
+            </div>
+            <label>Domanda
+                <textarea id="quizQuestion" placeholder="Es. Dove si sono conosciuti gli sposi?"></textarea>
+            </label>
+            <div class="quizAnswersGrid">
+                <label>Risposta 1
+                    <input id="quizAnswer0" type="text">
+                </label>
+                <label>Risposta 2
+                    <input id="quizAnswer1" type="text">
+                </label>
+                <label>Risposta 3
+                    <input id="quizAnswer2" type="text">
+                </label>
+                <label>Risposta 4
+                    <input id="quizAnswer3" type="text">
+                </label>
+            </div>
+            <label>Risposta esatta
+                <select id="quizCorrectIndex">
+                    <option value="">Scegli risposta corretta</option>
+                    <option value="0">Risposta 1</option>
+                    <option value="1">Risposta 2</option>
+                    <option value="2">Risposta 3</option>
+                    <option value="3">Risposta 4</option>
+                </select>
+            </label>
+            <div class="dialogActions">
+                <button value="cancel" class="listButton">Annulla</button>
+                <button id="launchQuiz" value="default" class="primaryButton">
+                    Salva domanda
+                </button>
+            </div>
+        </form>
+    </dialog>
+</main>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/fantasposi-admin.js"></script>
+</body>
+</html>

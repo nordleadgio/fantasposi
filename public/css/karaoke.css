@@ -1,0 +1,312 @@
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    --karaoke-highlight:#0608d1;
+    --karaoke-font:-apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    --karaoke-base-font:52px;
+    --karaoke-stage-scale:1;
+    font-family:var(--karaoke-font);
+    background:
+        linear-gradient(155deg, #03040a 0%, #0d111f 46%, #05060c 100%);
+    color:#ffffff;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        linear-gradient(90deg, rgba(255,255,255,.04), transparent 18%, transparent 82%, rgba(255,255,255,.035)),
+        linear-gradient(180deg, rgba(255,255,255,.05), transparent 28%, transparent 72%, rgba(0,0,0,.3));
+}
+
+.stage{
+    min-height:100%;
+    display:grid;
+    grid-template-rows:1fr;
+    padding:42px 58px;
+}
+
+.lyrics{
+    position:relative;
+    height:100%;
+    min-height:0;
+    padding:0;
+}
+
+.cdgStage{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#000;
+    z-index:5;
+}
+
+.videoStage{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#000;
+    z-index:6;
+}
+
+.videoStage[hidden]{
+    display:none;
+}
+
+.videoStage video{
+    width:100vw;
+    height:100vh;
+    object-fit:contain;
+    background:#000;
+}
+
+.cdgStage[hidden]{
+    display:none;
+}
+
+#cdgCanvas{
+    width:min(100vw, calc(100vh * 1.3888889));
+    height:min(100vh, calc(100vw * .72));
+    image-rendering:pixelated;
+    background:#000;
+}
+
+body.cdgMode .lyrics{
+    display:none;
+}
+
+body.videoMode .lyrics{
+    display:none;
+}
+
+.lyricStack{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:1024px;
+    height:576px;
+    display:grid;
+    grid-template-rows:repeat(4, 1fr);
+    align-content:center;
+    align-items:center;
+    justify-items:center;
+    gap:0;
+    padding:56px 42px;
+    overflow:hidden;
+    transform:translate(-50%, -50%) scale(var(--karaoke-stage-scale));
+    transform-origin:center center;
+}
+
+.lyricLine{
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:0;
+    height:100%;
+    width:100%;
+    max-width:960px;
+    opacity:0;
+    transform:translateY(14px) scale(.985);
+    text-align:center;
+    font-size:var(--karaoke-base-font);
+    line-height:1.08;
+    font-weight:900;
+    letter-spacing:0;
+    color:#ffffff;
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.95),
+        0 0 18px rgba(0,0,0,.86);
+    overflow:visible;
+    overflow-wrap:normal;
+    word-break:normal;
+    white-space:normal;
+    transition:
+        opacity .48s ease,
+        filter .48s ease,
+        transform .52s cubic-bezier(.2, .75, .18, 1);
+    will-change:opacity, transform;
+    -webkit-text-stroke:clamp(2px, calc(var(--karaoke-base-font) * .1), 8px) #050505;
+    paint-order:stroke fill;
+}
+
+.lyricLine.slot0{
+    grid-row:1;
+}
+
+.lyricLine.slot1{
+    grid-row:2;
+}
+
+.lyricLine.slot2{
+    grid-row:3;
+}
+
+.lyricLine.slot3{
+    grid-row:4;
+}
+
+.lyricLine.visible{
+    opacity:1;
+    transform:translateY(0) scale(1);
+}
+
+.lyricLineText{
+    --fit-scale:1;
+    display:inline-block;
+    width:auto;
+    max-width:none;
+    text-align:center;
+    white-space:nowrap;
+    word-break:keep-all;
+    overflow-wrap:normal;
+    transform:scale(var(--fit-scale));
+    transform-origin:center center;
+}
+
+.activeLine{
+    color:#ffffff;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.62));
+}
+
+.previousLine{
+    opacity:.98;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.62));
+}
+
+.nextLine{
+    opacity:.98;
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.62));
+}
+
+.upcomingLine{
+    opacity:.28;
+    filter:brightness(.62) saturate(.72);
+}
+
+.previousLine .lyricWord,
+.previousLine .lyricWord::before{
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.92),
+        0 0 14px rgba(0,0,0,.72);
+}
+
+.upcomingLine .lyricWord,
+.upcomingLine .lyricWord::before{
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.88),
+        0 0 14px rgba(0,0,0,.72);
+}
+
+.currentPairLine{
+    font-size:var(--karaoke-base-font);
+    filter:drop-shadow(0 6px 16px rgba(0,0,0,.62));
+    line-height:1.08;
+}
+
+.currentPairLine.visible{
+    opacity:1;
+}
+
+.lyricLine.visible.previousLine,
+.lyricLine.visible.nextLine{
+    opacity:.98;
+}
+
+.lyricLine.visible.upcomingLine{
+    opacity:.28;
+}
+
+.lyricLine.visible.upcomingLine.previewNear{
+    opacity:.46;
+}
+
+.lyricLine.hiddenCue,
+.lyricLine.hiddenCue.visible{
+    opacity:0;
+    transform:translateY(18px) scale(.98);
+}
+
+body.hideNextLine .lyricLine.slot2,
+body.hideNextLine .lyricLine.slot3{
+    display:none;
+}
+
+.lyricWord{
+    --word-progress:0%;
+    position:relative;
+    display:inline-block;
+    max-width:100%;
+    color:#ffffff;
+    overflow-wrap:normal;
+    word-break:keep-all;
+    white-space:nowrap;
+    -webkit-text-stroke:clamp(2px, calc(var(--karaoke-base-font) * .1), 8px) #050505;
+    paint-order:stroke fill;
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.95),
+        0 0 16px rgba(0,0,0,.82);
+    transition:filter .18s ease;
+}
+
+.lyricWordGroup{
+    display:inline-block;
+    white-space:nowrap;
+    word-break:keep-all;
+    overflow-wrap:normal;
+}
+
+.lyricWordGroup.wordGapBefore,
+.lyricWord.wordGapBefore,
+.lyricWord.wordGapAfter{
+    margin-left:0;
+    margin-right:0;
+}
+
+.lyricWord::before{
+    content:attr(data-text);
+    position:absolute;
+    inset:0;
+    width:var(--word-progress);
+    overflow:hidden;
+    color:var(--karaoke-highlight);
+    -webkit-text-stroke:clamp(2px, calc(var(--karaoke-base-font) * .1), 8px) #050505;
+    paint-order:stroke fill;
+    text-shadow:
+        0 4px 0 rgba(0,0,0,.95),
+        0 0 16px rgba(0,0,0,.82);
+    white-space:nowrap;
+    pointer-events:none;
+}
+
+.idle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100%;
+    text-align:center;
+    font-size:clamp(30px, 5vw, 72px);
+    font-weight:800;
+    color:rgba(255,255,255,.82);
+    text-shadow:0 5px 22px rgba(0,0,0,.75);
+}
+
+.footer{
+    display:none;
+}

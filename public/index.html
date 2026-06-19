@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KARAOKE R-EVOLUTION: il karaoke live con canzoni, giochi, quiz e classifiche.">
+<title>KARAOKE R-EVOLUTION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/karaoke-revolution.css">
+</head>
+<body>
+<header class="siteHeader">
+    <a class="brandMark" href="#home" aria-label="KARAOKE R-EVOLUTION home">
+        <img src="assets/karaoke-revolution-logo.png" alt="KARAOKE R-EVOLUTION">
+    </a>
+    <nav class="topNav" aria-label="Navigazione principale">
+        <a href="#serate">Serate</a>
+        <a href="#contatti">Contatti</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" id="home">
+        <div class="heroBackdrop" aria-hidden="true">
+            <div class="stageBeam beamA"></div>
+            <div class="stageBeam beamB"></div>
+            <div class="equalizer">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="heroContent">
+            <p class="eyebrow">Live karaoke show</p>
+            <h1 class="visuallyHidden">KARAOKE R-EVOLUTION</h1>
+            <img class="heroLogo" src="assets/karaoke-revolution-logo.png" alt="KARAOKE R-EVOLUTION">
+            <p class="claim">Il karaoke non è mai stato così live.</p>
+            <p class="subtitle">Canta, gioca, scala la classifica.</p>
+            <div class="heroActions">
+                <a class="button primary" href="#serate">Prossime serate</a>
+                <a class="button secondary" id="appLink" href="/karaoke.html">Entra nell'app karaoke</a>
+                <a class="button ghost" id="instagramHero" href="#" target="_blank" rel="noreferrer">Seguici su Instagram</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="serate">
+        <div class="sectionIntro">
+            <p class="eyebrow">Calendario live</p>
+            <h2>Prossime serate</h2>
+        </div>
+        <div class="eventsGrid" id="eventsGrid">
+            <div class="emptyState">Caricamento serate...</div>
+        </div>
+    </section>
+
+    <section class="instagramBand" id="instagram">
+        <div>
+            <p class="eyebrow">Instagram</p>
+            <h2>Guarda foto, video e momenti delle ultime serate.</h2>
+        </div>
+        <a class="button instagramButton" id="instagramSection" href="#" target="_blank" rel="noreferrer">
+            Segui KARAOKE R-EVOLUTION su Instagram
+        </a>
+        <div class="embedPlaceholder" aria-label="Spazio per feed Instagram futuro">
+            Feed Instagram pronto per incorporamento futuro
+        </div>
+    </section>
+
+    <section class="section" id="locali">
+        <div class="sectionIntro">
+            <p class="eyebrow">Dove cantiamo</p>
+            <h2>Locali partner</h2>
+        </div>
+        <div class="partnersGrid" id="partnersGrid">
+            <div class="emptyState">Caricamento locali...</div>
+        </div>
+    </section>
+
+    <section class="contactSection" id="contatti">
+        <div class="sectionIntro">
+            <p class="eyebrow">Prenota o scrivici</p>
+            <h2>Contatti</h2>
+        </div>
+        <div class="contactActions">
+            <a class="button primary" id="whatsappLink" href="#">WhatsApp</a>
+            <a class="button secondary" id="instagramContact" href="#" target="_blank" rel="noreferrer">Instagram</a>
+            <a class="button ghost" id="emailLink" href="#">Email</a>
+        </div>
+    </section>
+</main>
+
+<footer class="siteFooter">
+    <span>KARAOKE R-EVOLUTION</span>
+    <a href="/admin">Area admin</a>
+</footer>
+
+<script src="js/karaoke-revolution.js"></script>
+</body>
+</html>

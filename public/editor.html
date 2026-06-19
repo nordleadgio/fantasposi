@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Editor Karaoke</title>
+
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+
+<body>
+
+<div class="shell">
+    <header class="top">
+        <div>
+            <h1>Editor Karaoke</h1>
+            <div id="status" class="status"></div>
+        </div>
+
+        <div class="topActions">
+            <select id="exportFormat" title="Formato export">
+                <option value="mp3-mlive">MP3 MidiCo / M-Live</option>
+                <option value="mp3-lrc">MP3 + LRC</option>
+                <option value="folder">Cartella completa</option>
+            </select>
+            <button id="exportProject">Esporta</button>
+            <button id="saveProject" class="primary">Salva</button>
+        </div>
+    </header>
+
+    <section class="workflow">
+        <div class="step active">
+            <span>1</span>
+            <strong>Brano</strong>
+            <small id="songStep">Seleziona MP3</small>
+        </div>
+        <div class="step">
+            <span>2</span>
+            <strong>Testo</strong>
+            <small id="textStep">Da preparare</small>
+        </div>
+        <div class="step">
+            <span>3</span>
+            <strong>Sync</strong>
+            <small id="syncStep">0%</small>
+        </div>
+        <div class="step">
+            <span>4</span>
+            <strong>Export</strong>
+            <small id="exportStep">MidiCo pronto</small>
+        </div>
+    </section>
+
+    <section class="transport panel">
+        <div class="transportSong">
+            <label>Brano</label>
+            <div class="songPicker">
+                <button id="importSong" class="primary">Importa brano</button>
+                <select id="songSelect" title="Brani gia importati"></select>
+            </div>
+        </div>
+
+        <div class="transportAudio">
+            <label>Audio</label>
+            <audio id="audio" controls></audio>
+        </div>
+
+        <div class="transportStart">
+            <label>Punto di partenza</label>
+            <div class="inlineControls">
+                <input id="startOffset" type="number" min="0" step="100" value="0">
+                <button id="setStartOffset">Usa attuale</button>
+                <button id="goStartOffset">Vai</button>
+            </div>
+        </div>
+    </section>
+
+    <main class="grid">
+        <section class="panel textPanel">
+            <div class="panelTitle">
+                <span>Testo</span>
+                <button id="prepareText">Prepara</button>
+            </div>
+
+            <textarea id="lyricsText" placeholder="Incolla qui il testo della canzone..."></textarea>
+
+            <div id="textStats" class="statsRow">
+                0 righe · 0 parole
+            </div>
+        </section>
+
+        <section class="panel syncPanel">
+            <div class="panelTitle">
+                <span>Sincronizzazione</span>
+                <small id="syncSummary">Premi play e usa la barra spaziatrice</small>
+            </div>
+
+            <div class="syncToolbar">
+                <button id="previousWord">Indietro</button>
+                <button id="syncCurrent" class="primary">Sync parola</button>
+                <button id="nextWord">Avanti</button>
+                <button id="nudgeCurrentBack">-100 ms</button>
+                <button id="nudgeCurrentForward">+100 ms</button>
+                <button id="goCurrentWord">Vai alla parola</button>
+            </div>
+
+            <div id="words" class="words"></div>
+        </section>
+    </main>
+</div>
+
+<script src="/js/editor.js"></script>
+
+</body>
+</html>

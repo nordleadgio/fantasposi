@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: fantasposi
+    env: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run start:web
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FANTASPOSI_DATA_DIR
+        value: /var/data
+    disk:
+      name: fantasposi-data
+      mountPath: /var/data
+      sizeGB: 1

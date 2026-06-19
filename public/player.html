@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Player</title>
+
+<link rel="stylesheet" href="/css/player.css">
+
+</head>
+<body>
+
+<div class="appShell">
+
+    <header class="topBar compactConsole">
+
+        <section class="nowPanel">
+            <div class="eyebrow">Brano attuale</div>
+            <h2 id="currentSong">Nessun brano</h2>
+            <div id="nextSong">Prossimo: nessun brano</div>
+        </section>
+
+        <section class="transportPanel">
+            <div class="transportButtons">
+                <button id="playSelected">▶</button>
+                <button id="nextSelected">⏭</button>
+                <button id="stopSelected">■</button>
+                <button id="panicStop">PANIC</button>
+            </div>
+
+            <div class="progressRow compactProgress">
+                <span id="currentTime">0:00</span>
+                <input
+                    type="range"
+                    id="progress"
+                    value="0"
+                    min="0"
+                    max="100">
+                <span id="totalTime">0:00</span>
+            </div>
+        </section>
+
+        <section class="audioToolsPanel">
+            <div class="compactControl">
+                <label>Volume</label>
+                <input
+                    type="range"
+                    id="volume"
+                    min="0"
+                    max="100"
+                    value="100">
+            </div>
+            <div class="stepControl">
+                <label>Tonalità</label>
+                <button id="pitchDown" title="Abbassa tonalità di mezzo tono">−</button>
+                <strong id="pitchValue">0</strong>
+                <button id="pitchUp" title="Alza tonalità di mezzo tono">+</button>
+            </div>
+            <div class="compactControl">
+                <label>Tempo <span id="tempoValue">100%</span></label>
+                <input
+                    type="range"
+                    id="tempoControl"
+                    min="80"
+                    max="120"
+                    step="1"
+                    value="100">
+            </div>
+        </section>
+
+        <section id="remoteAccess">
+            <strong>Telecomando</strong>
+            <img id="remoteQr" alt="QR telecomando">
+            <div id="remoteUrl"></div>
+        </section>
+
+    </header>
+
+    <main class="layout">
+
+        <section class="panel livePanel" id="playerInfo">
+            <div class="panelTitle">
+                <span>Live</span>
+                <small>Audio, testo e sicurezza</small>
+            </div>
+
+            <div class="transportGrid">
+
+                <video id="audio" autoplay playsinline></video>
+                <video id="nextAudio" playsinline preload="auto"></video>
+
+            </div>
+
+            <div id="lyricsPanel">
+                <h3>Impostazioni schermo</h3>
+                <div class="syncRow">
+                    <label>Sync testo</label>
+                    <input
+                        type="range"
+                        id="lyricsOffset"
+                        min="-5000"
+                        max="5000"
+                        step="100"
+                        value="0">
+                    <span id="lyricsOffsetValue">0 ms</span>
+                </div>
+                <div class="syncRow">
+                    <label>Colore</label>
+                    <input
+                        type="color"
+                        id="karaokeHighlightColor"
+                        value="#0608d1">
+                    <span id="karaokeHighlightColorValue">#0608d1</span>
+                </div>
+                <div class="syncRow">
+                    <label>Font</label>
+                    <select id="karaokeFontFamily">
+                        <option value="System">Sistema</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Courier New">Courier</option>
+                    </select>
+                    <span></span>
+                </div>
+                <label class="toggleRow">
+                    <input
+                        type="checkbox"
+                        id="karaokeShowNextLine"
+                        checked>
+                    <span>Mostra frase successiva</span>
+                </label>
+                <div id="lyricsBox" class="hiddenPreview">
+                    Nessun testo caricato
+                </div>
+            </div>
+        </section>
+
+        <section class="panel playlistPanel">
+            <div class="panelTitle">
+                <span>Scaletta</span>
+                <small>Trascina per riordinare</small>
+            </div>
+
+            <div class="playlistTopActions">
+                <button id="importMp3">
+                    📁 Aggiungi
+                </button>
+
+                <button id="openKaraokeScreen">
+                    Pubblico
+                </button>
+
+                <button id="openKaraokePreview">
+                    Anteprima
+                </button>
+
+                <button id="openKaraokeEditor">
+                    Editor
+                </button>
+            </div>
+
+            <div id="dropZone">
+                Rilascia MP3 o MP4 qui
+            </div>
+
+            <div id="playlistControls">
+                <button id="queueSelected">
+                    ➕ Coda
+                </button>
+            </div>
+
+            <button id="clearPlaylist">
+                🗑 Svuota scaletta
+            </button>
+
+            <div id="playlistStats">0 brani</div>
+            <div id="playlist"></div>
+        </section>
+
+    </main>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script src="/js/cdg-renderer.js?v=pitch-rubberband-ramp-20260618"></script>
+<script src="/js/rubberband-engine.js?v=pitch-rubberband-ramp-20260618"></script>
+
+<script src="/js/player-playlist.js?v=pitch-rubberband-ramp-20260618"></script>
+<script src="/js/player-lyrics-preview.js?v=pitch-rubberband-ramp-20260618"></script>
+<script src="/js/player-media.js?v=pitch-rubberband-ramp-20260618"></script>
+<script src="/js/player.js?v=pitch-rubberband-ramp-20260618"></script>
+
+</body>
+</html>

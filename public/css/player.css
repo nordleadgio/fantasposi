@@ -1,0 +1,531 @@
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:Arial, sans-serif;
+    background:#101214;
+    color:#f4f4f4;
+}
+
+.appShell{
+    width:min(1600px, 100%);
+    margin:0 auto;
+    padding:10px;
+}
+
+.topBar{
+    display:grid;
+    grid-template-columns:minmax(280px, 1.5fr) minmax(380px, 1.7fr) minmax(310px, 1.1fr) 120px;
+    gap:8px;
+    align-items:stretch;
+    margin-bottom:8px;
+}
+
+.brandPanel,
+.nowPanel,
+.transportPanel,
+.audioToolsPanel,
+.panel,
+#remoteAccess{
+    background:#1b1f23;
+    border:1px solid #30363d;
+    border-radius:8px;
+    padding:10px;
+}
+
+.brandPanel{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.brandPanel h1{
+    margin:0;
+    font-size:20px;
+    letter-spacing:0;
+}
+
+.brandPanel div,
+.panelTitle small,
+#nextSong{
+    margin-top:8px;
+    color:#aeb6bf;
+    font-size:14px;
+}
+
+.nowPanel{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    min-width:0;
+    border-left:4px solid #0608d1;
+}
+
+.eyebrow{
+    color:#8b949e;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    margin-bottom:6px;
+}
+
+#currentSong{
+    margin:0;
+    color:#fff;
+    font-size:20px;
+    line-height:1.25;
+    overflow-wrap:anywhere;
+}
+
+#nextSong{
+    overflow-wrap:anywhere;
+}
+
+#remoteAccess{
+    text-align:center;
+    padding:8px;
+}
+
+#remoteQr{
+    display:block;
+    width:58px;
+    height:58px;
+    margin:4px auto;
+    background:#fff;
+    border-radius:4px;
+}
+
+#remoteUrl{
+    color:#aeb6bf;
+    font-size:12px;
+    word-break:break-all;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:minmax(300px, 380px) minmax(460px, 1fr);
+    gap:8px;
+    align-items:start;
+}
+
+.panelTitle{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    margin-bottom:12px;
+}
+
+.panelTitle span,
+.panel h2,
+.panel h3{
+    margin:0;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.panelTitle small{
+    margin:0;
+}
+
+.playlistPanel{
+    position:sticky;
+    top:10px;
+}
+
+.transportPanel{
+    display:grid;
+    grid-template-rows:auto auto;
+    gap:8px;
+}
+
+.transportButtons{
+    display:grid;
+    grid-template-columns:54px 54px 54px minmax(82px, 1fr);
+    gap:6px;
+}
+
+.transportButtons button{
+    min-height:42px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.audioToolsPanel{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:6px;
+    align-content:center;
+}
+
+.compactControl{
+    display:grid;
+    grid-template-columns:86px 1fr;
+    gap:8px;
+    align-items:center;
+    color:#c9d1d9;
+    font-size:12px;
+}
+
+.compactControl label{
+    white-space:nowrap;
+}
+
+.stepControl{
+    display:grid;
+    grid-template-columns:86px 38px 46px 38px;
+    gap:6px;
+    align-items:center;
+    color:#c9d1d9;
+    font-size:12px;
+}
+
+.stepControl strong{
+    text-align:center;
+    color:#fff;
+    font-size:16px;
+    font-variant-numeric:tabular-nums;
+}
+
+.stepControl button{
+    height:30px;
+    padding:0;
+}
+
+.transportGrid{
+    display:grid;
+    gap:12px;
+}
+
+audio{
+    width:100%;
+}
+
+video#audio{
+    width:100%;
+    height:0;
+    max-height:0;
+    opacity:0;
+    pointer-events:none;
+    background:#000;
+}
+
+#nextAudio{
+    display:none;
+}
+
+.progressRow{
+    display:grid;
+    grid-template-columns:48px 1fr 48px;
+    gap:10px;
+    align-items:center;
+    color:#c9d1d9;
+    font-variant-numeric:tabular-nums;
+}
+
+#progress,
+#volume,
+#lyricsOffset,
+#karaokeHighlightColor,
+#karaokeFontFamily{
+    width:100%;
+}
+
+#karaokeHighlightColor{
+    height:38px;
+    padding:3px;
+    border:1px solid #30363d;
+    border-radius:8px;
+    background:#15191d;
+}
+
+#karaokeFontFamily{
+    min-height:38px;
+    border:1px solid #30363d;
+    border-radius:8px;
+    background:#15191d;
+    color:#f4f4f4;
+    padding:8px;
+}
+
+.volumeRow{
+    display:grid;
+    grid-template-columns:68px 1fr;
+    gap:12px;
+    align-items:center;
+    color:#c9d1d9;
+}
+
+button{
+    border:0;
+    border-radius:8px;
+    padding:10px 12px;
+    cursor:pointer;
+    background:#30363d;
+    color:#f4f4f4;
+    font-size:14px;
+}
+
+button:hover{
+    background:#3b434c;
+}
+
+button:disabled{
+    opacity:.45;
+    cursor:default;
+}
+
+#panicStop{
+    width:100%;
+    background:#c62828;
+    color:#fff;
+    font-size:13px;
+    font-weight:bold;
+    min-height:42px;
+}
+
+#panicStop:hover{
+    background:#d93333;
+}
+
+#importMp3{
+    width:100%;
+    background:#0f7b4f;
+}
+
+#importMp3:hover{
+    background:#10925d;
+}
+
+#clearPlaylist,
+#openKaraokeScreen,
+#openKaraokePreview,
+#openKaraokeEditor{
+    width:100%;
+}
+
+#openKaraokeScreen,
+#openKaraokePreview{
+    background:#0608d1;
+}
+
+#openKaraokeScreen:hover,
+#openKaraokePreview:hover{
+    background:#1719f4;
+}
+
+#dropZone{
+    margin:10px 0;
+    min-height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    border:2px dashed #53606c;
+    border-radius:8px;
+    text-align:center;
+    color:#aeb6bf;
+    background:#15191d;
+    line-height:1.35;
+}
+
+#dropZone.dragOver{
+    border-color:#20c997;
+    background:#10241d;
+    color:#d8fff1;
+}
+
+#playlistControls{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    margin-bottom:10px;
+}
+
+.playlistTopActions{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr 1fr;
+    gap:8px;
+    margin-bottom:8px;
+}
+
+#playlistStats{
+    margin:10px 0;
+    color:#8b949e;
+    font-size:13px;
+}
+
+#playlist{
+    min-height:460px;
+    max-height:calc(100vh - 260px);
+    overflow:auto;
+    border:1px solid #30363d;
+    border-radius:8px;
+    background:#15191d;
+}
+
+.playlistItem{
+    display:grid;
+    grid-template-columns:1fr 40px 40px 40px;
+    align-items:center;
+    gap:8px;
+    padding:10px;
+    border-bottom:1px solid #2a3036;
+    cursor:grab;
+}
+
+.playlistItem:last-child{
+    border-bottom:0;
+}
+
+.playlistItem.dragging{
+    opacity:.45;
+}
+
+.playlistItem.selected{
+    background:#12372b;
+}
+
+.playlistItem.playing{
+    background:#101f5c;
+    border-left:4px solid #0608d1;
+}
+
+.playlistItem span{
+    overflow-wrap:anywhere;
+    line-height:1.25;
+}
+
+.playlistItem button{
+    width:40px;
+    height:36px;
+    padding:0;
+}
+
+#lyricsPanel{
+    min-height:0;
+    margin-top:8px;
+}
+
+#lyricsBox{
+    height:clamp(240px, 36vh, 420px);
+    overflow:auto;
+    border:1px solid #30363d;
+    border-radius:8px;
+    padding:10px;
+    background:#15191d;
+    color:#aeb6bf;
+}
+
+.hiddenPreview{
+    display:none;
+}
+
+.cdgPreview{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#000;
+    border-radius:6px;
+    overflow:hidden;
+}
+
+.cdgPreview canvas{
+    display:block;
+    width:100%;
+    max-width:520px;
+    aspect-ratio:300 / 216;
+    height:auto;
+    image-rendering:pixelated;
+}
+
+.lyricLine{
+    color:#8b949e;
+    font-size:clamp(18px, 2.1vw, 30px);
+    line-height:1.35;
+    padding:7px 4px;
+    text-align:center;
+}
+
+.lyricLine.active{
+    color:#0608d1;
+    font-weight:bold;
+}
+
+.lyricLine.past{
+    color:#4f5b66;
+}
+
+.lyricWord{
+    color:#8b949e;
+    transition:color .08s;
+}
+
+.lyricWord.sung{
+    color:#0608d1;
+    font-weight:bold;
+}
+
+.syncRow{
+    display:grid;
+    grid-template-columns:82px 1fr 64px;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+    color:#c9d1d9;
+    font-size:13px;
+}
+
+.toggleRow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:4px 0 12px;
+    color:#c9d1d9;
+    font-size:14px;
+}
+
+.toggleRow input{
+    width:18px;
+    height:18px;
+}
+
+@media (max-width:1180px){
+    .topBar,
+    .layout{
+        grid-template-columns:1fr;
+    }
+
+    .playlistPanel{
+        position:static;
+    }
+
+    #playlist{
+        max-height:420px;
+    }
+}
+
+@media (max-width:680px){
+    .appShell{
+        padding:10px;
+    }
+
+    .brandPanel{
+        display:none;
+    }
+
+    #playlistControls,
+    .playlistTopActions{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .syncRow{
+        grid-template-columns:1fr;
+    }
+
+    .playlistItem{
+        grid-template-columns:1fr 36px 36px 36px;
+    }
+}
