@@ -1,0 +1,864 @@
+:root {
+    --ink: #1d1d1f;
+    --night: #161416;
+    --muted: #707076;
+    --soft: #f6f1ec;
+    --paper: #fffdf9;
+    --panel: rgba(255, 255, 255, 0.9);
+    --glass: rgba(255, 253, 249, 0.78);
+    --line: rgba(29, 29, 31, 0.12);
+    --gold: #b88a44;
+    --wine: #7d2f45;
+    --sage: #6f8068;
+    --blue: #23486b;
+    --shadow: 0 20px 70px rgba(31, 24, 20, 0.13);
+    --title: "Playfair Display", Georgia, serif;
+    --body: "Inter", Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--body);
+    background:
+        linear-gradient(120deg, rgba(125, 47, 69, 0.11), transparent 34%),
+        linear-gradient(210deg, rgba(35, 72, 107, 0.1), transparent 36%),
+        var(--soft);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    border: 0;
+    cursor: pointer;
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.86);
+    color: var(--ink);
+    padding: 10px 12px;
+}
+
+textarea {
+    min-height: 98px;
+    resize: vertical;
+}
+
+label {
+    display: block;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+label input,
+label select,
+label textarea {
+    margin-top: 7px;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+h1,
+h2 {
+    font-family: var(--title);
+    line-height: 1.02;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.eyebrow {
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton,
+.dangerButton {
+    min-height: 46px;
+    border-radius: 8px;
+    padding: 0 16px;
+    font-weight: 900;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        background 0.18s ease;
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.ghostButton:hover,
+.dangerButton:hover {
+    transform: translateY(-1px);
+}
+
+.primaryButton {
+    background:
+        linear-gradient(135deg, #231f20, #422232 54%, #8f6830);
+    color: #fff;
+    box-shadow: 0 12px 28px rgba(35, 31, 32, 0.22);
+}
+
+.secondaryButton {
+    border: 1px solid rgba(184, 138, 68, 0.45);
+    background: rgba(184, 138, 68, 0.12);
+    color: var(--ink);
+}
+
+.ghostButton {
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--ink);
+}
+
+.dangerButton {
+    border: 1px solid rgba(125, 47, 69, 0.28);
+    background: rgba(125, 47, 69, 0.1);
+    color: var(--wine);
+}
+
+.plannerAdminBody {
+    min-height: 100vh;
+    background:
+        linear-gradient(90deg, rgba(22, 20, 22, 0.94) 0%, rgba(22, 20, 22, 0.72) 42%, rgba(246, 241, 236, 0.88) 100%),
+        url("../assets/wedding-soundtrack-hero.png") center / cover fixed;
+}
+
+.plannerAdminBody::before,
+.plannerGuestBody::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, black, transparent 74%);
+}
+
+.formMessage {
+    min-height: 20px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.loginGate {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background:
+        linear-gradient(115deg, rgba(22, 20, 22, 0.86), rgba(125, 47, 69, 0.42)),
+        url("../assets/wedding-soundtrack-hero.png") center / cover;
+}
+
+.loginCard,
+.adminPanel,
+.detailPanel,
+.plannerCard,
+.eventRow,
+.songBlock,
+.infoPanel,
+.summaryBox article,
+.summarySection,
+.choiceCard,
+.emptyState {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--glass);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+}
+
+.loginCard {
+    width: min(100%, 420px);
+    padding: 24px;
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 253, 249, 0.9);
+}
+
+.loginCard h1 {
+    margin: 7px 0 22px;
+    font-size: 2.6rem;
+}
+
+.loginCard .primaryButton {
+    width: 100%;
+    margin-top: 15px;
+}
+
+.adminApp.locked {
+    filter: blur(6px);
+    pointer-events: none;
+}
+
+.plannerTopbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px clamp(18px, 4vw, 42px);
+    border-bottom: 1px solid var(--line);
+    background: rgba(255, 253, 249, 0.86);
+    backdrop-filter: blur(16px);
+}
+
+.plannerTopbar h1 {
+    margin-top: 4px;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+.adminLayout {
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) 1fr;
+    gap: 18px;
+    width: min(100%, 1480px);
+    margin: 0 auto;
+    padding: 18px;
+}
+
+.adminPanel,
+.adminWorkspace,
+.detailPanel {
+    min-width: 0;
+}
+
+.adminPanel {
+    padding: 18px;
+    align-self: start;
+    position: sticky;
+    top: 18px;
+    overflow: hidden;
+}
+
+.adminPanel::before {
+    content: "";
+    display: block;
+    height: 150px;
+    margin: -18px -18px 18px;
+    border-radius: 8px 8px 0 0;
+    background:
+        linear-gradient(to bottom, rgba(22, 20, 22, 0.04), rgba(22, 20, 22, 0.56)),
+        url("../assets/wedding-soundtrack-hero.png") center / cover;
+}
+
+.panelHeader {
+    margin-bottom: 16px;
+}
+
+.panelHeader h2,
+.toolbarLine h2,
+.detailPanel h2,
+.answersView h2 {
+    font-size: 1.65rem;
+}
+
+.panelHeader p,
+.toolbarLine p,
+.detailMeta,
+.extraSongsHeader p {
+    margin-top: 5px;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.formStack,
+.editGrid,
+.fieldsGrid,
+.songFields {
+    display: grid;
+    gap: 12px;
+}
+
+.toolbarLine,
+.detailHeader,
+.extraSongsHeader,
+.songBlockHeader,
+.stepActions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.adminWorkspace {
+    display: grid;
+    gap: 14px;
+}
+
+.eventList {
+    display: grid;
+    gap: 10px;
+}
+
+.eventRow {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 4px 14px;
+    padding: 14px;
+    text-align: left;
+    overflow: hidden;
+    position: relative;
+    background:
+        linear-gradient(135deg, rgba(255, 253, 249, 0.94), rgba(255, 255, 255, 0.78));
+}
+
+.eventRow.selected {
+    outline: 3px solid rgba(184, 138, 68, 0.35);
+}
+
+.eventRow::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    background: linear-gradient(var(--wine), var(--gold), var(--sage));
+}
+
+.eventRow span {
+    font-weight: 900;
+}
+
+.eventRow strong {
+    color: var(--wine);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.eventRow small {
+    grid-column: 1 / -1;
+    color: var(--muted);
+}
+
+.detailPanel {
+    padding: 18px;
+}
+
+.statusPill {
+    display: inline-flex;
+    min-height: 28px;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0 10px;
+    background: rgba(111, 128, 104, 0.16);
+    color: var(--sage);
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.qrImage {
+    width: 112px;
+    height: 112px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.copyLine {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.detailActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 16px;
+}
+
+.editGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.wide {
+    grid-column: 1 / -1;
+}
+
+.answersView {
+    margin-top: 22px;
+}
+
+.summarySection {
+    padding: 14px;
+    margin-top: 10px;
+    box-shadow: none;
+}
+
+.summarySection h3 {
+    margin-bottom: 8px;
+}
+
+.summarySection p {
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.emptyState {
+    padding: 16px;
+    color: var(--muted);
+    box-shadow: none;
+}
+
+.plannerGuestBody {
+    min-height: 100vh;
+    background:
+        linear-gradient(90deg, rgba(22, 20, 22, 0.92) 0%, rgba(22, 20, 22, 0.72) 42%, rgba(22, 20, 22, 0.26) 100%),
+        url("../assets/wedding-soundtrack-hero.png") center / cover fixed;
+}
+
+.guestPlanner {
+    min-height: 100vh;
+}
+
+.guestIntro {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 22px;
+    color: #fff;
+}
+
+.introContent {
+    width: 100%;
+    max-width: 760px;
+    min-width: 0;
+    padding-bottom: 9vh;
+}
+
+.brandLogoWrap {
+    position: relative;
+    display: inline-block;
+    width: clamp(128px, 20vw, 205px);
+    margin: 0 0 46px -8px;
+    transform: rotate(-1.5deg);
+}
+
+.introTextGroup {
+    transform: translateY(28px);
+}
+
+.brandLogoWrap::before {
+    content: "";
+    position: absolute;
+    inset: 15% 2% 0;
+    z-index: -1;
+    border-radius: 42% 58% 45% 55%;
+    background:
+        radial-gradient(ellipse at 52% 45%, rgba(255, 210, 112, 0.34), rgba(184, 76, 109, 0.12) 48%, transparent 72%);
+    filter: blur(22px);
+    transform: scale(1.12);
+}
+
+.brandLogo {
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0.96;
+    filter:
+        saturate(0.92)
+        contrast(0.98)
+        drop-shadow(0 18px 24px rgba(0, 0, 0, 0.42))
+        drop-shadow(0 0 12px rgba(255, 196, 85, 0.2))
+        drop-shadow(0 0 28px rgba(184, 76, 109, 0.12));
+}
+
+.introContent h1 {
+    max-width: 11ch;
+    margin-top: 10px;
+    font-size: clamp(4rem, 12vw, 8rem);
+    overflow-wrap: anywhere;
+}
+
+.introContent p {
+    max-width: 35rem;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: clamp(1.05rem, 3vw, 1.32rem);
+    line-height: 1.55;
+}
+
+.introContent .primaryButton {
+    width: min(100%, 310px);
+    margin-top: 26px;
+}
+
+.eventFacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.eventFacts span {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.11);
+    padding: 8px 12px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 800;
+    backdrop-filter: blur(10px);
+}
+
+.plannerCard {
+    width: min(100% - 24px, 820px);
+    margin: 18px auto;
+    padding: clamp(16px, 4vw, 26px);
+    background: rgba(255, 253, 249, 0.92);
+    overflow: hidden;
+}
+
+.plannerCard::before {
+    content: "";
+    display: block;
+    height: 9px;
+    margin: calc(clamp(16px, 4vw, 26px) * -1) calc(clamp(16px, 4vw, 26px) * -1) 20px;
+    border-radius: 8px 8px 0 0;
+    background: linear-gradient(90deg, var(--wine), var(--gold), var(--sage), var(--blue));
+}
+
+.stepHeader {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.stepHeader h2 {
+    margin-top: 4px;
+    font-size: clamp(2rem, 7vw, 3.6rem);
+}
+
+.progressTrack {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(29, 29, 31, 0.08);
+}
+
+.progressTrack span {
+    display: block;
+    height: 100%;
+    width: 16%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--wine), var(--gold), var(--sage));
+    transition: width 0.25s ease;
+}
+
+.formStep {
+    display: none;
+}
+
+.formStep.active {
+    display: grid;
+    gap: 16px;
+}
+
+.fieldsGrid,
+.songFields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choiceGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.choiceCard {
+    min-height: 84px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    color: var(--ink);
+    box-shadow: none;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 240, 231, 0.9));
+}
+
+.choiceCard input {
+    width: 20px;
+    min-height: 20px;
+}
+
+.choiceCard span {
+    font-size: 1.1rem;
+    font-weight: 900;
+}
+
+.toggleLine {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 54px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.62);
+    padding: 10px 12px;
+    color: var(--ink);
+}
+
+.toggleLine input {
+    width: 20px;
+    min-height: 20px;
+    margin: 0;
+}
+
+.toggleLine span {
+    font-weight: 900;
+}
+
+.songBlock,
+.infoPanel {
+    padding: 14px;
+    box-shadow: none;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(250, 246, 241, 0.9));
+}
+
+.songBlock h3,
+.infoPanel h3,
+.summaryBox h3 {
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.infoPanel p {
+    margin-bottom: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.bestMoment {
+    border-color: rgba(184, 138, 68, 0.44);
+    background:
+        linear-gradient(135deg, rgba(184, 138, 68, 0.18), rgba(125, 47, 69, 0.08)),
+        rgba(255, 255, 255, 0.92);
+}
+
+.compactSong {
+    margin-top: 10px;
+}
+
+.momentGrid {
+    display: grid;
+    gap: 12px;
+}
+
+.summaryBox {
+    display: grid;
+    gap: 12px;
+}
+
+.summaryBox article {
+    padding: 14px;
+    box-shadow: none;
+}
+
+.summaryBox p {
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.stepActions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.stepActions .primaryButton {
+    min-width: 150px;
+}
+
+@media (max-width: 900px) {
+    .adminLayout {
+        grid-template-columns: 1fr;
+    }
+
+    .adminPanel {
+        position: static;
+    }
+}
+
+@media (max-width: 640px) {
+    .guestIntro {
+        place-items: start center;
+        padding-top: 56px;
+        text-align: center;
+    }
+
+    .introContent {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        padding-bottom: 36px;
+    }
+
+    .introTextGroup {
+        transform: translateY(58px);
+    }
+
+    .introContent p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .introContent .primaryButton {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .eventFacts {
+        justify-content: center;
+    }
+
+    .plannerTopbar,
+    .detailHeader,
+    .toolbarLine,
+    .extraSongsHeader,
+    .stepActions,
+    .detailActions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .copyLine,
+    .editGrid,
+    .fieldsGrid,
+    .songFields,
+    .choiceGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .wide {
+        grid-column: auto;
+    }
+
+    .qrImage {
+        width: 96px;
+        height: 96px;
+    }
+
+    .introContent h1 {
+        max-width: 100%;
+        font-size: clamp(2.75rem, 13vw, 5.2rem);
+    }
+
+    .brandLogoWrap {
+        width: clamp(118px, 34vw, 150px);
+        margin-left: 0;
+        margin-bottom: 48px;
+    }
+
+    .stepActions button {
+        width: 100%;
+    }
+}
+
+@media print {
+    @page {
+        margin: 14mm;
+    }
+
+    body {
+        background: #fff !important;
+        color: #111 !important;
+    }
+
+    body::before,
+    .loginGate,
+    .plannerTopbar,
+    .adminPanel,
+    .toolbarLine,
+    .eventList,
+    .copyLine,
+    .detailActions,
+    .editGrid,
+    #saveEvent,
+    .qrImage {
+        display: none !important;
+    }
+
+    .adminApp,
+    .adminLayout,
+    .adminWorkspace,
+    .detailPanel {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        border: 0 !important;
+        box-shadow: none !important;
+        filter: none !important;
+    }
+
+    .detailPanel.hidden {
+        display: block !important;
+    }
+
+    .detailHeader {
+        display: block !important;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .statusPill {
+        border: 1px solid #bbb;
+        background: #fff;
+        color: #333;
+    }
+
+    .answersView {
+        margin-top: 0;
+    }
+
+    .summarySection {
+        break-inside: avoid;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        background: #fff;
+        box-shadow: none;
+    }
+
+    .summarySection p {
+        color: #222;
+    }
+}

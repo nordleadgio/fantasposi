@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schede Musicali Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/wedding-planner.css">
+</head>
+<body class="plannerAdminBody">
+<section class="loginGate" id="loginGate">
+    <form class="loginCard" id="loginForm">
+        <span class="eyebrow">Accesso regia</span>
+        <h1>Schede musicali</h1>
+        <label>Password admin
+            <input id="adminPassword" type="password" autocomplete="current-password">
+        </label>
+        <button class="primaryButton" type="submit">Entra</button>
+        <p class="formMessage" id="loginMessage"></p>
+    </form>
+</section>
+
+<main class="adminApp locked" id="adminApp">
+    <header class="plannerTopbar">
+        <div>
+            <span class="eyebrow">Wedding soundtrack</span>
+            <h1>Scheda sposi</h1>
+        </div>
+        <button class="ghostButton" id="logoutButton" type="button">Esci</button>
+    </header>
+
+    <section class="adminLayout">
+        <aside class="adminPanel">
+            <div class="panelHeader">
+                <h2>Nuova scheda</h2>
+                <p>Prepara il link personalizzato da inviare agli sposi.</p>
+            </div>
+            <div class="formStack">
+                <label>Titolo
+                    <input id="newTitle" type="text" placeholder="Il matrimonio croccante di Simone e Alessia">
+                </label>
+                <label>Nome sposo
+                    <input id="newGroom" type="text" placeholder="Simone">
+                </label>
+                <label>Nome sposa
+                    <input id="newBride" type="text" placeholder="Alessia">
+                </label>
+                <label>Data matrimonio
+                    <input id="newDate" type="date">
+                </label>
+                <label>Location
+                    <input id="newVenue" type="text" placeholder="Nome ristorante o location">
+                </label>
+                <label>Messaggio iniziale
+                    <textarea id="newIntro" placeholder="Compilate con calma i momenti musicali piu importanti."></textarea>
+                </label>
+                <button class="primaryButton" id="createEvent" type="button">Crea link sposi</button>
+            </div>
+        </aside>
+
+        <section class="adminWorkspace">
+            <div class="toolbarLine">
+                <div>
+                    <h2>Eventi</h2>
+                    <p id="eventCounter">Nessuna scheda creata.</p>
+                </div>
+                <button class="ghostButton" id="refreshEvents" type="button">Aggiorna</button>
+            </div>
+
+            <div class="eventList" id="eventList"></div>
+
+            <article class="detailPanel hidden" id="detailPanel">
+                <div class="detailHeader">
+                    <div>
+                        <span class="statusPill" id="detailStatus">Bozza</span>
+                        <h2 id="detailTitle">Scheda</h2>
+                        <p id="detailMeta"></p>
+                    </div>
+                    <img class="qrImage" id="detailQr" alt="QR scheda musicale">
+                </div>
+
+                <div class="copyLine">
+                    <input id="detailUrl" type="text" readonly>
+                    <button class="secondaryButton" id="copyLink" type="button">Copia link</button>
+                </div>
+
+                <div class="detailActions">
+                    <button class="secondaryButton" id="printEvent" type="button">Apri PDF</button>
+                    <button class="dangerButton" id="deleteEvent" type="button">Elimina scheda</button>
+                </div>
+
+                <div class="editGrid">
+                    <label>Titolo
+                        <input id="editTitle" type="text">
+                    </label>
+                    <label>Stato
+                        <select id="editStatus">
+                            <option value="bozza">Bozza</option>
+                            <option value="inviata">Inviata</option>
+                            <option value="in compilazione">In compilazione</option>
+                            <option value="compilata">Compilata</option>
+                            <option value="revisionata">Revisionata</option>
+                        </select>
+                    </label>
+                    <label>Nome sposo
+                        <input id="editGroom" type="text">
+                    </label>
+                    <label>Nome sposa
+                        <input id="editBride" type="text">
+                    </label>
+                    <label>Data
+                        <input id="editDate" type="date">
+                    </label>
+                    <label>Location
+                        <input id="editVenue" type="text">
+                    </label>
+                    <label class="wide">Messaggio iniziale
+                        <textarea id="editIntro"></textarea>
+                    </label>
+                    <label class="wide">Note admin per rito religioso
+                        <textarea id="editAdminCeremonyNotes" placeholder="Qui puoi segnare accordi con parroco/chiesa o brani da compilare tu."></textarea>
+                    </label>
+                </div>
+                <button class="primaryButton" id="saveEvent" type="button">Salva modifiche admin</button>
+
+                <section class="answersView">
+                    <div class="panelHeader">
+                        <h2>Compilazione ricevuta</h2>
+                        <p>Riepilogo ordinato per telefonata, revisione o scaletta finale.</p>
+                    </div>
+                    <div id="answersSummary"></div>
+                </section>
+            </article>
+        </section>
+    </section>
+</main>
+
+<script src="/js/wedding-planner-admin.js"></script>
+</body>
+</html>

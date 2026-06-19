@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheda Musicale Sposi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/wedding-planner.css">
+</head>
+<body class="plannerGuestBody">
+<main class="guestPlanner">
+    <section class="guestIntro" id="guestIntro">
+        <div class="introContent">
+            <div class="brandLogoWrap">
+                <img
+                    class="brandLogo"
+                    src="/assets/logo-fettine-panate.png"
+                    alt="Le Fettine Panate">
+            </div>
+            <div class="introTextGroup">
+                <span class="eyebrow">Il matrimonio croccante di</span>
+                <h1 id="eventTitle">La vostra colonna sonora</h1>
+                <p id="eventIntro">Compilate con calma i momenti musicali piu importanti.</p>
+                <div class="eventFacts" id="eventFacts"></div>
+                <button class="primaryButton" id="startButton" type="button">Inizia la compilazione</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="plannerCard hidden" id="formShell">
+        <header class="stepHeader">
+            <div>
+                <span class="eyebrow" id="stepCounter">Step 1 di 5</span>
+                <h2 id="stepTitle">Gli sposi</h2>
+            </div>
+            <div class="progressTrack">
+                <span id="progressFill"></span>
+            </div>
+        </header>
+
+        <form id="plannerForm">
+            <section class="formStep active" data-step="0">
+                <div class="fieldsGrid">
+                    <label>Nome e cognome sposo
+                        <input data-field="couple.groomFullName" type="text" autocomplete="name">
+                    </label>
+                    <label>Nome e cognome sposa
+                        <input data-field="couple.brideFullName" type="text" autocomplete="name">
+                    </label>
+                    <label>Eta sposo
+                        <input data-field="couple.groomAge" type="number" min="18" max="120">
+                    </label>
+                    <label>Eta sposa
+                        <input data-field="couple.brideAge" type="number" min="18" max="120">
+                    </label>
+                </div>
+                <label class="toggleLine">
+                    <input data-field="couple.hasChildren" type="checkbox">
+                    <span>Abbiamo figli</span>
+                </label>
+                <label class="conditional" data-visible-when="couple.hasChildren">Nomi dei figli
+                    <textarea data-field="couple.childrenNames" placeholder="Scrivete i nomi, anche separati da virgola."></textarea>
+                </label>
+            </section>
+
+            <section class="formStep" data-step="1">
+                <div class="choiceGrid">
+                    <label class="choiceCard">
+                        <input data-field="ceremony.type" type="radio" value="civil" name="ceremonyType">
+                        <span>Rito civile</span>
+                    </label>
+                    <label class="choiceCard">
+                        <input data-field="ceremony.type" type="radio" value="religious" name="ceremonyType">
+                        <span>Rito religioso</span>
+                    </label>
+                </div>
+
+                <div class="conditional" data-visible-value="ceremony.type:civil">
+                    <label class="toggleLine">
+                        <input data-field="ceremony.civilSeparateEntrances" type="checkbox">
+                        <span>Ingresso separato degli sposi</span>
+                    </label>
+                    <div class="conditional songBlock" data-visible-when="ceremony.civilSeparateEntrances">
+                        <h3>Ingresso sposo</h3>
+                        <div data-song="ceremony.groomEntranceSong"></div>
+                    </div>
+                    <div class="conditional songBlock" data-visible-when="ceremony.civilSeparateEntrances">
+                        <h3>Ingresso sposa</h3>
+                        <div data-song="ceremony.brideEntranceSong"></div>
+                    </div>
+                    <div class="conditional songBlock" data-hidden-when="ceremony.civilSeparateEntrances">
+                        <h3>Ingresso insieme</h3>
+                        <div data-song="ceremony.jointEntranceSong"></div>
+                    </div>
+                    <div class="songBlock">
+                        <h3>Conclusione rito</h3>
+                        <div data-song="ceremony.ceremonyClosingSong"></div>
+                    </div>
+                    <div class="songBlock">
+                        <h3>Uscita sposi</h3>
+                        <div data-song="ceremony.ceremonyExitSong"></div>
+                    </div>
+                </div>
+
+                <div class="infoPanel conditional" data-visible-value="ceremony.type:religious">
+                    <h3>Rito religioso</h3>
+                    <p>I brani per la chiesa verranno concordati insieme.</p>
+                    <label>Note o desideri da segnalarci
+                        <textarea data-field="ceremony.religiousNotes" placeholder="Es. avevamo pensato a un brano, ma vogliamo prima confrontarci con voi."></textarea>
+                    </label>
+                </div>
+            </section>
+
+            <section class="formStep" data-step="2">
+                <div class="songBlock">
+                    <h3>Arrivo sposi alla location</h3>
+                    <div data-song="reception.arrivalSong"></div>
+                </div>
+                <div class="songBlock">
+                    <h3>Ingresso in sala</h3>
+                    <div data-song="reception.entranceSong"></div>
+                </div>
+                <div class="songBlock">
+                    <h3>Ballo sposi</h3>
+                    <div data-song="reception.firstDanceSong"></div>
+                </div>
+                <div class="songBlock bestMoment">
+                    <h3>Taglio torta - brano principale</h3>
+                    <div data-song="reception.cakeMainSong"></div>
+                </div>
+                <div class="extraSongsHeader">
+                    <div>
+                        <h3>Altri brani a seguire</h3>
+                        <p>Aggiungete solo se volete una sequenza piu lunga, oppure procediamo noi a sentimento.</p>
+                    </div>
+                    <button class="secondaryButton" id="addCakeSong" type="button">Aggiungi brano</button>
+                </div>
+                <div id="cakeExtraSongs"></div>
+            </section>
+
+            <section class="formStep" data-step="3">
+                <div class="momentGrid">
+                    <label class="toggleLine">
+                        <input data-field="specialMoments.parentDance" type="checkbox">
+                        <span>Ballo con i genitori</span>
+                    </label>
+                    <div class="conditional songBlock" data-visible-when="specialMoments.parentDance">
+                        <h3>Canzone ballo con i genitori</h3>
+                        <div data-song="specialMoments.parentDanceSong"></div>
+                    </div>
+                    <label class="toggleLine">
+                        <input data-field="specialMoments.siblingDance" type="checkbox">
+                        <span>Ballo con fratelli o sorelle</span>
+                    </label>
+                    <div class="conditional songBlock" data-visible-when="specialMoments.siblingDance">
+                        <h3>Canzone ballo con fratelli o sorelle</h3>
+                        <div data-song="specialMoments.siblingDanceSong"></div>
+                    </div>
+                    <label class="toggleLine">
+                        <input data-field="specialMoments.childrenDance" type="checkbox">
+                        <span>Ballo con i figli</span>
+                    </label>
+                    <div class="conditional songBlock" data-visible-when="specialMoments.childrenDance">
+                        <h3>Canzone ballo con i figli</h3>
+                        <div data-song="specialMoments.childrenDanceSong"></div>
+                    </div>
+                </div>
+                <label>Dediche
+                    <textarea data-field="specialMoments.dedications" placeholder="Scrivete eventuali dediche, persone coinvolte o sorprese."></textarea>
+                </label>
+                <label>Altre richieste
+                    <textarea data-field="specialMoments.otherRequests" placeholder="Tutto quello che volete segnalarci."></textarea>
+                </label>
+            </section>
+
+            <section class="formStep" data-step="4">
+                <div class="summaryBox" id="finalSummary"></div>
+                <p class="formMessage" id="submitMessage"></p>
+            </section>
+        </form>
+
+        <footer class="stepActions">
+            <button class="ghostButton" id="prevStep" type="button">Indietro</button>
+            <button class="secondaryButton" id="saveDraft" type="button">Salva</button>
+            <button class="primaryButton" id="nextStep" type="button">Avanti</button>
+            <button class="primaryButton hidden" id="submitPlanner" type="button">Invia scheda</button>
+        </footer>
+    </section>
+</main>
+
+<script src="/js/wedding-planner.js"></script>
+</body>
+</html>

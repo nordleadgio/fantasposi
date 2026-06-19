@@ -20,6 +20,9 @@ const {
 const {
     installKaraokeRevolution
 } = require("./karaoke-revolution");
+const {
+    installWeddingPlanner
+} = require("./wedding-planner");
 const PUBLIC_FOLDER = path.join(
     __dirname,
     "../public"
@@ -68,15 +71,33 @@ const playerState = {
 
 app.use(express.json({ limit: "2mb" }));
 
+app.get("/", (req, res) => {
+
+    sendPublicFile(res, "wedding-planner-admin.html");
+
+});
+
 app.get(["/fantasposi.html", "/invitati"], (req, res) => {
 
     sendPublicFile(res, "fantasposi.html");
 
 });
 
-app.get(["/fantasposi-admin.html", "/admin"], (req, res) => {
+app.get("/fantasposi-admin.html", (req, res) => {
 
     sendPublicFile(res, "fantasposi-admin.html");
+
+});
+
+app.get(["/wedding-planner-admin.html", "/schede-musicali-admin", "/admin"], (req, res) => {
+
+    sendPublicFile(res, "wedding-planner-admin.html");
+
+});
+
+app.get(["/wedding-planner.html", "/scheda-musicale/:token"], (req, res) => {
+
+    sendPublicFile(res, "wedding-planner.html");
 
 });
 
@@ -95,6 +116,24 @@ app.get("/js/fantasposi.js", (req, res) => {
 app.get("/js/fantasposi-admin.js", (req, res) => {
 
     sendPublicFile(res, "js/fantasposi-admin.js");
+
+});
+
+app.get("/css/wedding-planner.css", (req, res) => {
+
+    sendPublicFile(res, "css/wedding-planner.css");
+
+});
+
+app.get("/js/wedding-planner.js", (req, res) => {
+
+    sendPublicFile(res, "js/wedding-planner.js");
+
+});
+
+app.get("/js/wedding-planner-admin.js", (req, res) => {
+
+    sendPublicFile(res, "js/wedding-planner-admin.js");
 
 });
 
@@ -139,6 +178,7 @@ app.use("/music", express.static(MUSIC_FOLDER));
 
 installFantasposi(app, io);
 installKaraokeRevolution(app);
+installWeddingPlanner(app);
 
 app.get("/api/songs", (req, res) => {
 
