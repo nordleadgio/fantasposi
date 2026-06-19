@@ -98,6 +98,24 @@ app.get("/js/fantasposi-admin.js", (req, res) => {
 
 });
 
+app.get("/fantasposi.webmanifest", (req, res) => {
+
+    sendPublicFile(res, "fantasposi.webmanifest");
+
+});
+
+app.get("/fantasposi-sw.js", (req, res) => {
+
+    sendPublicFile(res, "fantasposi-sw.js");
+
+});
+
+app.get("/icons/fantasposi-icon.svg", (req, res) => {
+
+    sendPublicFile(res, "icons/fantasposi-icon.svg");
+
+});
+
 app.use(
     express.static(
         PUBLIC_FOLDER,

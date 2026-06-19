@@ -8,6 +8,7 @@
     let participant =
         loadParticipant();
     let activeChallenge = null;
+    let installPrompt = null;
 
     const els = {
         guestSubtitle: document.getElementById("guestSubtitle"),
@@ -23,6 +24,9 @@
         homePanel: document.getElementById("homePanel"),
         identityTeam: document.getElementById("identityTeam"),
         identityTable: document.getElementById("identityTable"),
+        installBox: document.getElementById("installBox"),
+        installButton: document.getElementById("installButton"),
+        installHint: document.getElementById("installHint"),
         guestBrideTeamLabel: document.getElementById("guestBrideTeamLabel"),
         guestGroomTeamLabel: document.getElementById("guestGroomTeamLabel"),
         guestBrideScore: document.getElementById("guestBrideScore"),
@@ -54,6 +58,24 @@
     });
 
     els.joinButton.addEventListener("click", join);
+    els.installButton.addEventListener("click", installApp);
+
+    window.addEventListener("beforeinstallprompt", event => {
+        event.preventDefault();
+        installPrompt = event;
+        renderInstallBox();
+    });
+
+    window.addEventListener("appinstalled", () => {
+        installPrompt = null;
+        localStorage.setItem("fantasposiInstalled", "yes");
+        renderInstallBox();
+    });
+
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/fantasposi-sw.js")
+            .catch(() => {});
+    }
 
     socket.on("fantasposi:state", nextState => {
         state = nextState;
@@ -102,6 +124,7 @@
         renderLatestAward();
         renderChallenge();
         renderQuiz();
+        renderInstallBox();
 
     }
 
@@ -168,6 +191,79 @@
                 state.event.groomTeamName;
         els.identityTable.textContent =
             table ? table.name : "Tavolo";
+
+    }
+
+    function renderInstallBox() {
+
+        if (!els.installBox || !participant) {
+            return;
+        }
+
+        const standalone =
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone;
+
+        if (
+            standalone ||
+            localStorage.getItem("fantasposiInstalled") === "yes"
+        ) {
+            els.installBox.classList.add("hidden");
+            return;
+        }
+
+        els.installBox.classList.remove("hidden");
+
+        if (installPrompt) {
+            els.installButton.textContent =
+                "Installa";
+            els.installHint.textContent =
+                "Tocca Installa: avrai l'icona Fantasposi pronta per quiz e sfide.";
+            return;
+        }
+
+        if (isIos()) {
+            els.installButton.textContent =
+                "Come fare";
+            els.installHint.textContent =
+                "Su iPhone: tocca Condividi, poi Aggiungi alla schermata Home.";
+            return;
+        }
+
+        els.installButton.textContent =
+            "Ok";
+        els.installHint.textContent =
+            "Apri il menu del browser e scegli Aggiungi alla schermata Home.";
+
+    }
+
+    function installApp() {
+
+        if (installPrompt) {
+            installPrompt.prompt();
+            installPrompt.userChoice.finally(() => {
+                installPrompt = null;
+                renderInstallBox();
+            });
+            return;
+        }
+
+        if (isIos()) {
+            window.alert(
+                "Su iPhone: premi il tasto Condividi in Safari, poi scegli Aggiungi alla schermata Home."
+            );
+            return;
+        }
+
+        window.alert(
+            "Apri il menu del browser e scegli Aggiungi alla schermata Home."
+        );
+
+    }
+
+    function isIos() {
+
+        return /iphone|ipad|ipod/i.test(navigator.userAgent);
 
     }
 
