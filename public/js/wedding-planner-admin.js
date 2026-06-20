@@ -519,9 +519,19 @@
         return `
             <article class="summarySection">
                 <h3>${escapeHtml(title)}</h3>
-                ${cleanRows.map(row => `<p>${escapeHtml(row)}</p>`).join("")}
+                ${cleanRows.map(renderSummaryRow).join("")}
             </article>
         `;
+
+    }
+
+    function renderSummaryRow(row) {
+
+        if (typeof row === "object" && row.html) {
+            return `<p>${row.html}</p>`;
+        }
+
+        return `<p>${escapeHtml(row)}</p>`;
 
     }
 
@@ -531,7 +541,44 @@
             return "";
         }
 
-        return `${label}: ${[value.title, value.artist].filter(Boolean).join(" - ")}${value.youtubeUrl ? ` (${value.youtubeUrl})` : ""}`;
+        const details =
+            [value.title, value.artist].filter(Boolean).join(" - ");
+        const url =
+            safeUrl(value.youtubeUrl);
+        const text =
+            `${label}: ${details || "brano indicato"}`;
+
+        if (!url) {
+            return text;
+        }
+
+        return {
+            html: `${escapeHtml(text)} <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Apri link YouTube</a>`
+        };
+
+    }
+
+    function safeUrl(value) {
+
+        const url =
+            String(value || "").trim();
+
+        if (!url) {
+            return "";
+        }
+
+        try {
+            const parsed =
+                new URL(url);
+
+            if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+                return "";
+            }
+
+            return parsed.href;
+        } catch {
+            return "";
+        }
 
     }
 

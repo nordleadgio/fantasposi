@@ -455,6 +455,13 @@ h2 {
     line-height: 1.45;
 }
 
+.summarySection a {
+    color: var(--wine);
+    font-weight: 900;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+}
+
 .emptyState {
     padding: 16px;
     color: var(--muted);
