@@ -371,6 +371,10 @@ function publicBaseUrl(req) {
 
     const host =
         req.get("host") || "localhost:3000";
+    const forwardedProto =
+        String(req.get("x-forwarded-proto") || "").split(",")[0].trim();
+    const protocol =
+        forwardedProto || req.protocol;
     const port =
         host.includes(":") ? host.split(":").pop() : "3000";
     const hostName =
@@ -381,10 +385,10 @@ function publicBaseUrl(req) {
         hostName === "127.0.0.1" ||
         hostName === "::1"
     ) {
-        return `${req.protocol}://${getLocalAddress()}:${port}`;
+        return `${protocol}://${getLocalAddress()}:${port}`;
     }
 
-    return `${req.protocol}://${host}`;
+    return `${protocol}://${host}`;
 
 }
 
