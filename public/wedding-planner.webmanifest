@@ -1,0 +1,21 @@
+{
+    "name": "Scheda Sposi",
+    "short_name": "Scheda Sposi",
+    "description": "La scheda musicale degli sposi firmata Le Fettine Panate.",
+    "start_url": "/admin",
+    "display": "standalone",
+    "background_color": "#161416",
+    "theme_color": "#161416",
+    "icons": [
+        {
+            "src": "/assets/wedding-icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/wedding-icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

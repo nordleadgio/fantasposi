@@ -137,6 +137,12 @@ app.get("/js/wedding-planner-admin.js", (req, res) => {
 
 });
 
+app.get("/wedding-planner.webmanifest", (req, res) => {
+
+    sendPublicFile(res, "wedding-planner.webmanifest");
+
+});
+
 app.get("/fantasposi.webmanifest", (req, res) => {
 
     sendPublicFile(res, "fantasposi.webmanifest");
