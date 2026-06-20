@@ -93,7 +93,7 @@
                 els.eventTitle.textContent =
                     "Scheda non trovata";
                 els.eventIntro.textContent =
-                    "Controlla il link ricevuto oppure richiedilo alla regia musicale.";
+                    "Controlla il link ricevuto oppure richiedine uno nuovo.";
                 els.startButton.classList.add("hidden");
             });
 
