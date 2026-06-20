@@ -391,6 +391,16 @@
 
         clearTimeout(saveTimer);
 
+        if (showMessage) {
+            setFormMessage(
+                submit ?
+                    "Invio della scheda in corso..." :
+                    "Salvataggio in corso...",
+                "loading",
+                false
+            );
+        }
+
         return fetch(
             `/api/wedding-planner/public/${encodeURIComponent(token)}`,
             {
@@ -409,18 +419,41 @@
                 eventData = data;
                 answers = data.answers || answers;
                 if (showMessage) {
-                    els.submitMessage.textContent =
+                    setFormMessage(
                         submit ?
-                            "Scheda inviata." :
-                            "Bozza salvata.";
+                            "Scheda inviata correttamente. Grazie, abbiamo ricevuto le vostre scelte." :
+                            "Scheda salvata correttamente. Potete continuare o tornare a modificarla quando volete.",
+                        "success",
+                        true
+                    );
                 }
             })
             .catch(() => {
                 if (showMessage) {
-                    els.submitMessage.textContent =
-                        "Non riesco a salvare in questo momento. Riprova tra poco.";
+                    setFormMessage(
+                        "Non riesco a salvare in questo momento. Riprova tra poco.",
+                        "error",
+                        true
+                    );
                 }
             });
+
+    }
+
+    function setFormMessage(message, type, focusMessage) {
+
+        els.submitMessage.textContent =
+            message;
+        els.submitMessage.dataset.type =
+            type;
+        els.submitMessage.classList.add("isVisible");
+
+        if (focusMessage) {
+            els.submitMessage.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
 
     }
 

@@ -195,9 +195,40 @@ h2 {
 }
 
 .formMessage {
-    min-height: 20px;
-    color: var(--muted);
-    font-size: 0.9rem;
+    display: none;
+    margin-top: 18px;
+    border: 1px solid rgba(184, 138, 68, 0.35);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.82);
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 900;
+    line-height: 1.4;
+    box-shadow: 0 14px 34px rgba(35, 31, 32, 0.1);
+}
+
+.formMessage.isVisible {
+    display: block;
+}
+
+.formMessage[data-type="success"] {
+    border-color: rgba(91, 123, 105, 0.38);
+    background:
+        linear-gradient(135deg, rgba(91, 123, 105, 0.18), rgba(255, 255, 255, 0.94));
+}
+
+.formMessage[data-type="loading"] {
+    border-color: rgba(184, 138, 68, 0.42);
+    background:
+        linear-gradient(135deg, rgba(184, 138, 68, 0.18), rgba(255, 255, 255, 0.94));
+}
+
+.formMessage[data-type="error"] {
+    border-color: rgba(125, 47, 69, 0.36);
+    background:
+        linear-gradient(135deg, rgba(125, 47, 69, 0.14), rgba(255, 255, 255, 0.94));
+    color: var(--wine);
 }
 
 .loginGate {
