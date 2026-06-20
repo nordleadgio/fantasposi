@@ -136,6 +136,31 @@ h2 {
     color: var(--ink);
 }
 
+.contractButton {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 8px;
+    padding: 0 16px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-weight: 900;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        background 0.18s ease;
+}
+
+.contractButton:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 214, 139, 0.62);
+    background: rgba(255, 255, 255, 0.18);
+}
+
 .ghostButton {
     border: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.7);
@@ -514,9 +539,16 @@ h2 {
     line-height: 1.55;
 }
 
-.introContent .primaryButton {
-    width: min(100%, 310px);
+.introActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
     margin-top: 26px;
+}
+
+.introContent .primaryButton,
+.introContent .contractButton {
+    width: min(100%, 310px);
 }
 
 .eventFacts {
@@ -686,6 +718,35 @@ h2 {
     gap: 12px;
 }
 
+.contractDownload {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-color: rgba(184, 138, 68, 0.38);
+    padding: 16px;
+    background:
+        linear-gradient(135deg, rgba(184, 138, 68, 0.16), rgba(255, 255, 255, 0.95));
+    box-shadow: none;
+}
+
+.contractDownload h3 {
+    margin-bottom: 6px;
+    font-size: 1.05rem;
+}
+
+.contractDownload p {
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.contractDownload .secondaryButton {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+
 .summaryBox article {
     padding: 14px;
     box-shadow: none;
@@ -739,9 +800,29 @@ h2 {
         margin-right: auto;
     }
 
+    .introActions {
+        justify-content: center;
+    }
+
     .introContent .primaryButton {
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .introContent .contractButton {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .contractDownload {
+        align-items: stretch;
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .contractDownload .secondaryButton {
+        justify-content: center;
+        width: 100%;
     }
 
     .eventFacts {
