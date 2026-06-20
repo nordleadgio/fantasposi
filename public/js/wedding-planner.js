@@ -96,7 +96,10 @@
         return {
             couple: {},
             ceremony: {
-                civilSeparateEntrances: true
+                civilSeparateEntrances: true,
+                startTime: "",
+                churchName: "",
+                churchTown: ""
             },
             reception: {
                 cakeExtraSongs: []
@@ -432,6 +435,9 @@
             ])}
             ${summarySection("Rito", [
                 ceremonyType,
+                data.ceremony.startTime && `Orario inizio rito: ${data.ceremony.startTime}`,
+                data.ceremony.type === "religious" && data.ceremony.churchName && `Chiesa: ${data.ceremony.churchName}`,
+                data.ceremony.type === "religious" && data.ceremony.churchTown && `Paese chiesa: ${data.ceremony.churchTown}`,
                 songLine("Ingresso sposo", data.ceremony.groomEntranceSong),
                 songLine("Ingresso sposa", data.ceremony.brideEntranceSong),
                 songLine("Ingresso insieme", data.ceremony.jointEntranceSong),

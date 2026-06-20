@@ -77,6 +77,10 @@
                     </label>
                 </div>
 
+                <label>Orario di inizio rito
+                    <input data-field="ceremony.startTime" type="time">
+                </label>
+
                 <div class="conditional" data-visible-value="ceremony.type:civil">
                     <label class="toggleLine">
                         <input data-field="ceremony.civilSeparateEntrances" type="checkbox">
@@ -107,6 +111,14 @@
                 <div class="infoPanel conditional" data-visible-value="ceremony.type:religious">
                     <h3>Rito religioso</h3>
                     <p>I brani per la chiesa verranno concordati insieme.</p>
+                    <div class="fieldsGrid">
+                        <label>Nome della chiesa
+                            <input data-field="ceremony.churchName" type="text" placeholder="Es. Chiesa di San Marco">
+                        </label>
+                        <label>Paese della chiesa
+                            <input data-field="ceremony.churchTown" type="text" placeholder="Es. Galatina">
+                        </label>
+                    </div>
                     <label>Note o desideri da segnalarci
                         <textarea data-field="ceremony.religiousNotes" placeholder="Es. avevamo pensato a un brano, ma vogliamo prima confrontarci con voi."></textarea>
                     </label>

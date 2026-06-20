@@ -459,6 +459,9 @@
             section("Rito", [
                 ceremony.type === "civil" ? "Rito civile" : "",
                 ceremony.type === "religious" ? "Rito religioso" : "",
+                ceremony.startTime && `Orario inizio rito: ${ceremony.startTime}`,
+                ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
+                ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
                 song("Ingresso sposo", ceremony.groomEntranceSong),
                 song("Ingresso sposa", ceremony.brideEntranceSong),
                 song("Ingresso insieme", ceremony.jointEntranceSong),

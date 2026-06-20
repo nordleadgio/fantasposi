@@ -200,6 +200,9 @@ function createEmptyAnswers() {
         },
         ceremony: {
             type: "",
+            startTime: "",
+            churchName: "",
+            churchTown: "",
             civilSeparateEntrances: true,
             groomEntranceSong: cleanSong({}),
             brideEntranceSong: cleanSong({}),
@@ -257,6 +260,9 @@ function cleanAnswers(value) {
         type: ["civil", "religious"].includes(ceremony.type) ?
             ceremony.type :
             "",
+        startTime: cleanText(ceremony.startTime, "", 20),
+        churchName: cleanText(ceremony.churchName, "", 180),
+        churchTown: cleanText(ceremony.churchTown, "", 120),
         civilSeparateEntrances:
             ceremony.civilSeparateEntrances !== false,
         groomEntranceSong: cleanSong(ceremony.groomEntranceSong),
@@ -447,6 +453,9 @@ function summaryLines(event) {
             rows: [
                 ceremony.type === "civil" ? "Rito civile" : "",
                 ceremony.type === "religious" ? "Rito religioso" : "",
+                ceremony.startTime && `Orario inizio rito: ${ceremony.startTime}`,
+                ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
+                ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
                 songLabel("Ingresso sposo", ceremony.groomEntranceSong),
                 songLabel("Ingresso sposa", ceremony.brideEntranceSong),
                 songLabel("Ingresso insieme", ceremony.jointEntranceSong),
