@@ -2,6 +2,8 @@
 
     const token =
         location.pathname.split("/").filter(Boolean).pop();
+    const autoOpenForm =
+        new URLSearchParams(location.search).get("admin") === "1";
     const steps = [
         "Gli sposi",
         "Il rito",
@@ -80,6 +82,12 @@
                 hydrateFields();
                 renderCakeSongs();
                 renderConditionals();
+
+                if (autoOpenForm) {
+                    els.guestIntro.classList.add("hidden");
+                    els.formShell.classList.remove("hidden");
+                    renderStep();
+                }
             })
             .catch(() => {
                 els.eventTitle.textContent =

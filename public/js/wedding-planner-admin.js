@@ -32,6 +32,7 @@
         detailQr: $("detailQr"),
         detailUrl: $("detailUrl"),
         copyLink: $("copyLink"),
+        openPlanner: $("openPlanner"),
         printEvent: $("printEvent"),
         deleteEvent: $("deleteEvent"),
         editTitle: $("editTitle"),
@@ -51,6 +52,7 @@
     els.createEvent.addEventListener("click", createEvent);
     els.refreshEvents.addEventListener("click", loadEvents);
     els.copyLink.addEventListener("click", copyLink);
+    els.openPlanner.addEventListener("click", openPlanner);
     els.printEvent.addEventListener("click", printSelected);
     els.deleteEvent.addEventListener("click", deleteSelected);
     els.saveEvent.addEventListener("click", saveSelected);
@@ -291,6 +293,22 @@
         els.detailUrl.select();
         navigator.clipboard.writeText(els.detailUrl.value)
             .catch(() => document.execCommand("copy"));
+
+    }
+
+    function openPlanner() {
+
+        const event =
+            events.find(item => item.token === selectedToken);
+
+        if (!event || !event.publicUrl) {
+            return;
+        }
+
+        window.open(
+            `${event.publicUrl}?admin=1`,
+            "_blank"
+        );
 
     }
 
