@@ -188,6 +188,10 @@
             const field =
                 event.target.dataset.field;
 
+            if (handleDynamicField(event.target)) {
+                return;
+            }
+
             if (!field || !answers) {
                 return;
             }
@@ -201,6 +205,10 @@
             const field =
                 event.target.dataset.field;
 
+            if (handleDynamicField(event.target)) {
+                return;
+            }
+
             if (!field || !answers) {
                 return;
             }
@@ -209,6 +217,108 @@
             renderConditionals();
             scheduleSave();
         });
+
+    }
+
+    function handleDynamicField(input) {
+
+        if (!answers || !input || !input.dataset) {
+            return false;
+        }
+
+        if ("extraSongField" in input.dataset) {
+            const songs =
+                answers.ceremony[input.dataset.extraSongKey] || [];
+            const song =
+                songs[Number(input.dataset.extraSongIndex)];
+
+            if (!song) {
+                return true;
+            }
+
+            song[input.dataset.extraSongField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        if ("civilMomentField" in input.dataset) {
+            const moment =
+                (answers.ceremony.civilCustomMoments || [])[Number(input.dataset.civilMomentIndex)];
+
+            if (!moment) {
+                return true;
+            }
+
+            moment[input.dataset.civilMomentField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        if ("civilMomentSongField" in input.dataset) {
+            const moment =
+                (answers.ceremony.civilCustomMoments || [])[Number(input.dataset.civilMomentIndex)];
+
+            if (!moment) {
+                return true;
+            }
+
+            moment.song =
+                moment.song || emptySong();
+            moment.song[input.dataset.civilMomentSongField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        if ("civilMomentExtraField" in input.dataset) {
+            const moment =
+                (answers.ceremony.civilCustomMoments || [])[Number(input.dataset.civilMomentIndex)];
+            const song =
+                moment && moment.extraSongs[Number(input.dataset.civilMomentExtraIndex)];
+
+            if (!song) {
+                return true;
+            }
+
+            song[input.dataset.civilMomentExtraField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        if ("receptionExtraField" in input.dataset) {
+            const songs =
+                answers.reception[input.dataset.receptionExtraKey] || [];
+            const song =
+                songs[Number(input.dataset.receptionExtraIndex)];
+
+            if (!song) {
+                return true;
+            }
+
+            song[input.dataset.receptionExtraField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        if ("cakeField" in input.dataset) {
+            const song =
+                (answers.reception.cakeExtraSongs || [])[Number(input.dataset.cakeIndex)];
+
+            if (!song) {
+                return true;
+            }
+
+            song[input.dataset.cakeField] =
+                input.value;
+            scheduleSave();
+            return true;
+        }
+
+        return false;
 
     }
 
