@@ -380,6 +380,20 @@
 
     }
 
+    function syncStandardFieldsFromDom() {
+
+        $$("[data-field]").forEach(input => {
+            if (input.type === "radio" && !input.checked) {
+                return;
+            }
+
+            writeField(input.dataset.field, readInput(input));
+        });
+
+        renderConditionals();
+
+    }
+
     function hydrateFields() {
 
         $$("[data-field]").forEach(input => {
@@ -593,17 +607,17 @@
                         <button class="ghostButton" type="button" data-remove-civil-moment="${index}" onclick="event.preventDefault(); event.stopImmediatePropagation(); window.weddingPlannerRemoveCivilMoment(${index}); return false;">Rimuovi</button>
                     </div>
                     <label>Titolo del momento
-                        <input type="text" value="${escapeAttr(moment.title)}" data-civil-moment-index="${index}" data-civil-moment-field="title" placeholder="Es. Ingresso fedi">
+                        <input type="text" value="${escapeAttr(moment.title)}" data-field="ceremony.civilCustomMoments.${index}.title" placeholder="Es. Ingresso fedi">
                     </label>
                     <div class="songFields">
                         <label>Canzone
-                            <input type="text" value="${escapeAttr(moment.song && moment.song.title)}" data-civil-moment-index="${index}" data-civil-moment-song-field="title">
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.title)}" data-field="ceremony.civilCustomMoments.${index}.song.title">
                         </label>
                         <label>Artista
-                            <input type="text" value="${escapeAttr(moment.song && moment.song.artist)}" data-civil-moment-index="${index}" data-civil-moment-song-field="artist">
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.artist)}" data-field="ceremony.civilCustomMoments.${index}.song.artist">
                         </label>
                         <label class="wide">Link YouTube
-                            <input type="url" value="${escapeAttr(moment.song && moment.song.youtubeUrl)}" data-civil-moment-index="${index}" data-civil-moment-song-field="youtubeUrl">
+                            <input type="url" value="${escapeAttr(moment.song && moment.song.youtubeUrl)}" data-field="ceremony.civilCustomMoments.${index}.song.youtubeUrl">
                         </label>
                     </div>
                     <div data-civil-moment-extra-songs="${index}">
@@ -615,13 +629,13 @@
                                 </div>
                                 <div class="songFields">
                                     <label>Canzone
-                                        <input type="text" value="${escapeAttr(song.title)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="title">
+                                        <input type="text" value="${escapeAttr(song.title)}" data-field="ceremony.civilCustomMoments.${index}.extraSongs.${songIndex}.title">
                                     </label>
                                     <label>Artista
-                                        <input type="text" value="${escapeAttr(song.artist)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="artist">
+                                        <input type="text" value="${escapeAttr(song.artist)}" data-field="ceremony.civilCustomMoments.${index}.extraSongs.${songIndex}.artist">
                                     </label>
                                     <label class="wide">Link YouTube
-                                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="youtubeUrl">
+                                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-field="ceremony.civilCustomMoments.${index}.extraSongs.${songIndex}.youtubeUrl">
                                     </label>
                                 </div>
                             </article>
@@ -903,6 +917,7 @@
 
     function save(submit, showMessage) {
 
+        syncStandardFieldsFromDom();
         syncDynamicFieldsFromDom();
         clearTimeout(saveTimer);
 
