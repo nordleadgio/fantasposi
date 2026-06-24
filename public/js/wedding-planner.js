@@ -7,7 +7,7 @@
     const steps = [
         "Gli sposi",
         "Il rito",
-        "Best Moment",
+        "Best Moments",
         "Momenti speciali",
         "Riepilogo"
     ];
@@ -74,6 +74,11 @@
                 addCeremonyExtraSong(button.dataset.addExtraSong)
             );
         });
+        $$("[data-add-reception-extra-song]").forEach(button => {
+            button.addEventListener("click", () =>
+                addReceptionExtraSong(button.dataset.addReceptionExtraSong)
+            );
+        });
         els.addCakeSong.addEventListener("click", addCakeSong);
 
         fetch(`/api/wedding-planner/public/${encodeURIComponent(token)}`)
@@ -90,6 +95,7 @@
                 hydrateFields();
                 renderCeremonyExtras();
                 renderCivilMoments();
+                renderReceptionExtras();
                 renderCakeSongs();
                 renderConditionals();
 
@@ -127,6 +133,9 @@
                 civilNotes: ""
             },
             reception: {
+                arrivalExtraSongs: [],
+                entranceExtraSongs: [],
+                firstDanceExtraSongs: [],
                 cakeExtraSongs: []
             },
             specialMoments: {}
@@ -555,6 +564,82 @@
 
     }
 
+    function addReceptionExtraSong(key) {
+
+        answers.reception[key] =
+            Array.isArray(answers.reception[key]) ? answers.reception[key] : [];
+        answers.reception[key].push(emptySong());
+        renderReceptionExtras();
+        scheduleSave();
+
+    }
+
+    function renderReceptionExtras() {
+
+        $$("[data-reception-extra-songs]").forEach(container => {
+            const key =
+                container.dataset.receptionExtraSongs;
+            const songs =
+                Array.isArray(answers.reception[key]) ? answers.reception[key] : [];
+
+            container.innerHTML =
+                songs.map((song, index) => receptionExtraSongHtml(key, song, index)).join("");
+        });
+
+        $$("[data-reception-extra-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                const songs =
+                    answers.reception[input.dataset.receptionExtraKey] || [];
+                const song =
+                    songs[Number(input.dataset.receptionExtraIndex)];
+
+                if (!song) {
+                    return;
+                }
+
+                song[input.dataset.receptionExtraField] =
+                    input.value;
+                scheduleSave();
+            });
+        });
+
+        $$("[data-remove-reception-extra]").forEach(button => {
+            button.addEventListener("click", () => {
+                const songs =
+                    answers.reception[button.dataset.removeReceptionExtra] || [];
+
+                songs.splice(Number(button.dataset.removeReceptionExtraIndex), 1);
+                renderReceptionExtras();
+                scheduleSave();
+            });
+        });
+
+    }
+
+    function receptionExtraSongHtml(key, song, index) {
+
+        return `
+            <article class="songBlock compactSong nestedSong">
+                <div class="songBlockHeader">
+                    <h3>Brano aggiuntivo ${index + 1}</h3>
+                    <button class="ghostButton" type="button" data-remove-reception-extra="${key}" data-remove-reception-extra-index="${index}">Rimuovi</button>
+                </div>
+                <div class="songFields">
+                    <label>Canzone
+                        <input type="text" value="${escapeAttr(song.title)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="title">
+                    </label>
+                    <label>Artista
+                        <input type="text" value="${escapeAttr(song.artist)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="artist">
+                    </label>
+                    <label class="wide">Link YouTube
+                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="youtubeUrl">
+                    </label>
+                </div>
+            </article>
+        `;
+
+    }
+
     function addCakeSong() {
 
         answers.reception.cakeExtraSongs =
@@ -780,13 +865,22 @@
                 data.ceremony.civilNotes && `Altre richieste rito civile: ${data.ceremony.civilNotes}`,
                 data.ceremony.religiousNotes
             ])}
-            ${summarySection("Best Moment", [
+            ${summarySection("Best Moments", [
                 songLine("Arrivo location", data.reception.arrivalSong),
+                ...(data.reception.arrivalExtraSongs || []).map((song, index) =>
+                    songLine(`Arrivo location - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Ingresso", data.reception.entranceSong),
+                ...(data.reception.entranceExtraSongs || []).map((song, index) =>
+                    songLine(`Ingresso - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Ballo sposi", data.reception.firstDanceSong),
+                ...(data.reception.firstDanceExtraSongs || []).map((song, index) =>
+                    songLine(`Ballo sposi - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Taglio torta", data.reception.cakeMainSong),
                 ...(data.reception.cakeExtraSongs || []).map((song, index) =>
-                    songLine(`Brano extra ${index + 1}`, song)
+                    songLine(`Taglio torta - brano aggiuntivo ${index + 1}`, song)
                 )
             ])}
             ${summarySection("Momenti speciali", [

@@ -510,13 +510,22 @@
                 ceremony.civilNotes && `Altre richieste rito civile: ${ceremony.civilNotes}`,
                 ceremony.religiousNotes && `Note rito: ${ceremony.religiousNotes}`
             ]),
-            section("Best Moment", [
+            section("Best Moments", [
                 song("Arrivo location", reception.arrivalSong),
+                ...((reception.arrivalExtraSongs || []).map((item, index) =>
+                    song(`Arrivo location - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Ingresso", reception.entranceSong),
+                ...((reception.entranceExtraSongs || []).map((item, index) =>
+                    song(`Ingresso - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Ballo sposi", reception.firstDanceSong),
+                ...((reception.firstDanceExtraSongs || []).map((item, index) =>
+                    song(`Ballo sposi - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Taglio torta", reception.cakeMainSong),
                 ...((reception.cakeExtraSongs || []).map((item, index) =>
-                    song(`Brano extra ${index + 1}`, item)
+                    song(`Taglio torta - brano aggiuntivo ${index + 1}`, item)
                 ))
             ]),
             section("Momenti speciali", [

@@ -251,6 +251,9 @@ function createEmptyAnswers() {
             entranceSong: cleanSong({}),
             firstDanceSong: cleanSong({}),
             cakeMainSong: cleanSong({}),
+            arrivalExtraSongs: [],
+            entranceExtraSongs: [],
+            firstDanceExtraSongs: [],
             cakeExtraSongs: []
         },
         specialMoments: {
@@ -320,6 +323,9 @@ function cleanAnswers(value) {
         entranceSong: cleanSong(reception.entranceSong),
         firstDanceSong: cleanSong(reception.firstDanceSong),
         cakeMainSong: cleanSong(reception.cakeMainSong),
+        arrivalExtraSongs: cleanSongList(reception.arrivalExtraSongs),
+        entranceExtraSongs: cleanSongList(reception.entranceExtraSongs),
+        firstDanceExtraSongs: cleanSongList(reception.firstDanceExtraSongs),
         cakeExtraSongs: cleanSongList(reception.cakeExtraSongs)
     };
 
@@ -530,14 +536,23 @@ function summaryLines(event) {
             ]
         },
         {
-            title: "Best Moment",
+            title: "Best Moments",
             rows: [
                 songLabel("Arrivo location", reception.arrivalSong),
+                ...((reception.arrivalExtraSongs || []).map((song, index) =>
+                    songLabel(`Arrivo location - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Ingresso", reception.entranceSong),
+                ...((reception.entranceExtraSongs || []).map((song, index) =>
+                    songLabel(`Ingresso - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Ballo sposi", reception.firstDanceSong),
+                ...((reception.firstDanceExtraSongs || []).map((song, index) =>
+                    songLabel(`Ballo sposi - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Taglio torta", reception.cakeMainSong),
                 ...((reception.cakeExtraSongs || []).map((song, index) =>
-                    songLabel(`Brano extra ${index + 1}`, song)
+                    songLabel(`Taglio torta - brano aggiuntivo ${index + 1}`, song)
                 ))
             ]
         },

@@ -180,29 +180,37 @@
 
             <section class="formStep" data-step="2">
                 <div class="songBlock">
-                    <h3>Arrivo sposi alla location</h3>
+                    <div class="songBlockHeader">
+                        <h3>Arrivo sposi alla location</h3>
+                        <button class="ghostButton" type="button" data-add-reception-extra-song="arrivalExtraSongs">Aggiungi brano</button>
+                    </div>
                     <div data-song="reception.arrivalSong"></div>
+                    <div data-reception-extra-songs="arrivalExtraSongs"></div>
                 </div>
                 <div class="songBlock">
-                    <h3>Ingresso in sala</h3>
+                    <div class="songBlockHeader">
+                        <h3>Ingresso in sala</h3>
+                        <button class="ghostButton" type="button" data-add-reception-extra-song="entranceExtraSongs">Aggiungi brano</button>
+                    </div>
                     <div data-song="reception.entranceSong"></div>
+                    <div data-reception-extra-songs="entranceExtraSongs"></div>
                 </div>
                 <div class="songBlock">
-                    <h3>Ballo sposi</h3>
+                    <div class="songBlockHeader">
+                        <h3>Ballo sposi</h3>
+                        <button class="ghostButton" type="button" data-add-reception-extra-song="firstDanceExtraSongs">Aggiungi brano</button>
+                    </div>
                     <div data-song="reception.firstDanceSong"></div>
+                    <div data-reception-extra-songs="firstDanceExtraSongs"></div>
                 </div>
                 <div class="songBlock bestMoment">
-                    <h3>Taglio torta - brano principale</h3>
-                    <div data-song="reception.cakeMainSong"></div>
-                </div>
-                <div class="extraSongsHeader">
-                    <div>
-                        <h3>Altri brani a seguire</h3>
-                        <p>Aggiungete solo se volete una sequenza piu lunga, oppure procediamo noi a sentimento.</p>
+                    <div class="songBlockHeader">
+                        <h3>Taglio torta - brano principale</h3>
+                        <button class="ghostButton" id="addCakeSong" type="button">Aggiungi brano</button>
                     </div>
-                    <button class="secondaryButton" id="addCakeSong" type="button">Aggiungi brano</button>
+                    <div data-song="reception.cakeMainSong"></div>
+                    <div id="cakeExtraSongs"></div>
                 </div>
-                <div id="cakeExtraSongs"></div>
             </section>
 
             <section class="formStep" data-step="3">
