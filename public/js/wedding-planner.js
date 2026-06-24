@@ -184,11 +184,40 @@
 
     function bindFields() {
 
+        document.addEventListener("click", event => {
+            const addCivilMomentSong =
+                event.target.closest("[data-add-civil-moment-song]");
+            const removeCivilMoment =
+                event.target.closest("[data-remove-civil-moment]");
+            const removeCivilMomentSong =
+                event.target.closest("[data-remove-civil-moment-song]");
+
+            if (addCivilMomentSong) {
+                event.preventDefault();
+                addCivilMomentExtraSong(Number(addCivilMomentSong.dataset.addCivilMomentSong));
+                return;
+            }
+
+            if (removeCivilMoment) {
+                event.preventDefault();
+                removeCivilMomentAt(Number(removeCivilMoment.dataset.removeCivilMoment));
+                return;
+            }
+
+            if (removeCivilMomentSong) {
+                event.preventDefault();
+                removeCivilMomentExtraSong(
+                    Number(removeCivilMomentSong.dataset.removeCivilMomentSong),
+                    Number(removeCivilMomentSong.dataset.removeCivilMomentSongIndex)
+                );
+            }
+        });
+
         document.addEventListener("input", event => {
             const field =
                 event.target.dataset.field;
 
-            if (handleDynamicField(event.target)) {
+            if (handleDynamicField(event.target, true)) {
                 return;
             }
 
@@ -205,7 +234,7 @@
             const field =
                 event.target.dataset.field;
 
-            if (handleDynamicField(event.target)) {
+            if (handleDynamicField(event.target, true)) {
                 return;
             }
 
@@ -220,7 +249,7 @@
 
     }
 
-    function handleDynamicField(input) {
+    function handleDynamicField(input, shouldSchedule) {
 
         if (!answers || !input || !input.dataset) {
             return false;
@@ -238,7 +267,9 @@
 
             song[input.dataset.extraSongField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
@@ -252,7 +283,9 @@
 
             moment[input.dataset.civilMomentField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
@@ -268,7 +301,9 @@
                 moment.song || emptySong();
             moment.song[input.dataset.civilMomentSongField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
@@ -276,7 +311,9 @@
             const moment =
                 (answers.ceremony.civilCustomMoments || [])[Number(input.dataset.civilMomentIndex)];
             const song =
-                moment && moment.extraSongs[Number(input.dataset.civilMomentExtraIndex)];
+                moment &&
+                Array.isArray(moment.extraSongs) &&
+                moment.extraSongs[Number(input.dataset.civilMomentExtraIndex)];
 
             if (!song) {
                 return true;
@@ -284,7 +321,9 @@
 
             song[input.dataset.civilMomentExtraField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
@@ -300,7 +339,9 @@
 
             song[input.dataset.receptionExtraField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
@@ -314,11 +355,28 @@
 
             song[input.dataset.cakeField] =
                 input.value;
-            scheduleSave();
+            if (shouldSchedule) {
+                scheduleSave();
+            }
             return true;
         }
 
         return false;
+
+    }
+
+    function syncDynamicFieldsFromDom() {
+
+        $$([
+            "[data-extra-song-field]",
+            "[data-civil-moment-field]",
+            "[data-civil-moment-song-field]",
+            "[data-civil-moment-extra-field]",
+            "[data-reception-extra-field]",
+            "[data-cake-field]"
+        ].join(",")).forEach(input => {
+            handleDynamicField(input, false);
+        });
 
     }
 
@@ -504,6 +562,8 @@
 
     function addCivilMoment() {
 
+        syncDynamicFieldsFromDom();
+
         answers.ceremony.civilCustomMoments =
             Array.isArray(answers.ceremony.civilCustomMoments) ?
                 answers.ceremony.civilCustomMoments :
@@ -571,106 +631,55 @@
                 </article>
             `).join("");
 
-        bindCivilMomentFields();
+    }
+
+    function addCivilMomentExtraSong(momentIndex) {
+
+        syncDynamicFieldsFromDom();
+
+        const moment =
+            (answers.ceremony.civilCustomMoments || [])[momentIndex];
+
+        if (!moment) {
+            return;
+        }
+
+        moment.extraSongs =
+            Array.isArray(moment.extraSongs) ? moment.extraSongs : [];
+        moment.extraSongs.push(emptySong());
+        renderCivilMoments();
+        scheduleSave();
 
     }
 
-    function bindCivilMomentFields() {
+    function removeCivilMomentAt(momentIndex) {
 
-        $$("[data-civil-moment-field]").forEach(input => {
-            input.addEventListener("input", () => {
-                const moment =
-                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
+        syncDynamicFieldsFromDom();
 
-                if (!moment) {
-                    return;
-                }
+        if (!Array.isArray(answers.ceremony.civilCustomMoments)) {
+            return;
+        }
 
-                moment[input.dataset.civilMomentField] =
-                    input.value;
-                scheduleSave();
-            });
-        });
+        answers.ceremony.civilCustomMoments.splice(momentIndex, 1);
+        renderCivilMoments();
+        scheduleSave();
 
-        $$("[data-civil-moment-song-field]").forEach(input => {
-            input.addEventListener("input", () => {
-                const moment =
-                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
+    }
 
-                if (!moment) {
-                    return;
-                }
+    function removeCivilMomentExtraSong(momentIndex, songIndex) {
 
-                moment.song =
-                    moment.song || emptySong();
-                moment.song[input.dataset.civilMomentSongField] =
-                    input.value;
-                scheduleSave();
-            });
-        });
+        syncDynamicFieldsFromDom();
 
-        $$("[data-civil-moment-extra-field]").forEach(input => {
-            input.addEventListener("input", () => {
-                const moment =
-                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
-                const song =
-                    moment && moment.extraSongs[Number(input.dataset.civilMomentExtraIndex)];
+        const moment =
+            (answers.ceremony.civilCustomMoments || [])[momentIndex];
 
-                if (!song) {
-                    return;
-                }
+        if (!moment || !Array.isArray(moment.extraSongs)) {
+            return;
+        }
 
-                song[input.dataset.civilMomentExtraField] =
-                    input.value;
-                scheduleSave();
-            });
-        });
-
-        $$("[data-add-civil-moment-song]").forEach(button => {
-            button.addEventListener("click", () => {
-                const moment =
-                    answers.ceremony.civilCustomMoments[Number(button.dataset.addCivilMomentSong)];
-
-                if (!moment) {
-                    return;
-                }
-
-                moment.extraSongs =
-                    Array.isArray(moment.extraSongs) ? moment.extraSongs : [];
-                moment.extraSongs.push(emptySong());
-                renderCivilMoments();
-                scheduleSave();
-            });
-        });
-
-        $$("[data-remove-civil-moment]").forEach(button => {
-            button.addEventListener("click", () => {
-                answers.ceremony.civilCustomMoments.splice(
-                    Number(button.dataset.removeCivilMoment),
-                    1
-                );
-                renderCivilMoments();
-                scheduleSave();
-            });
-        });
-
-        $$("[data-remove-civil-moment-song]").forEach(button => {
-            button.addEventListener("click", () => {
-                const moment =
-                    answers.ceremony.civilCustomMoments[Number(button.dataset.removeCivilMomentSong)];
-
-                if (!moment || !Array.isArray(moment.extraSongs)) {
-                    return;
-                }
-
-                moment.extraSongs.splice(
-                    Number(button.dataset.removeCivilMomentSongIndex),
-                    1
-                );
-                renderCivilMoments();
-                scheduleSave();
-            });
-        });
+        moment.extraSongs.splice(songIndex, 1);
+        renderCivilMoments();
+        scheduleSave();
 
     }
 
@@ -855,6 +864,7 @@
 
     function save(submit, showMessage) {
 
+        syncDynamicFieldsFromDom();
         clearTimeout(saveTimer);
 
         if (showMessage) {
