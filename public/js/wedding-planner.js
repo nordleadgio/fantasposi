@@ -590,7 +590,7 @@
                 <article class="songBlock compactSong customMoment">
                     <div class="songBlockHeader">
                         <h3>Momento ${index + 1}</h3>
-                        <button class="ghostButton" type="button" data-remove-civil-moment="${index}">Rimuovi</button>
+                        <button class="ghostButton" type="button" data-remove-civil-moment="${index}" onclick="event.preventDefault(); event.stopImmediatePropagation(); window.weddingPlannerRemoveCivilMoment(${index}); return false;">Rimuovi</button>
                     </div>
                     <label>Titolo del momento
                         <input type="text" value="${escapeAttr(moment.title)}" data-civil-moment-index="${index}" data-civil-moment-field="title" placeholder="Es. Ingresso fedi">
@@ -611,7 +611,7 @@
                             <article class="songBlock compactSong nestedSong">
                                 <div class="songBlockHeader">
                                     <h3>Brano aggiuntivo ${songIndex + 1}</h3>
-                                    <button class="ghostButton" type="button" data-remove-civil-moment-song="${index}" data-remove-civil-moment-song-index="${songIndex}">Rimuovi</button>
+                                    <button class="ghostButton" type="button" data-remove-civil-moment-song="${index}" data-remove-civil-moment-song-index="${songIndex}" onclick="event.preventDefault(); event.stopImmediatePropagation(); window.weddingPlannerRemoveCivilMomentSong(${index}, ${songIndex}); return false;">Rimuovi</button>
                                 </div>
                                 <div class="songFields">
                                     <label>Canzone
@@ -627,7 +627,7 @@
                             </article>
                         `).join("")}
                     </div>
-                    <button class="secondaryButton" type="button" data-add-civil-moment-song="${index}">Aggiungi brano</button>
+                    <button class="secondaryButton" type="button" data-add-civil-moment-song="${index}" onclick="event.preventDefault(); event.stopImmediatePropagation(); window.weddingPlannerAddCivilMomentSong(${index}); return false;">Aggiungi brano</button>
                 </article>
             `).join("");
 
@@ -1097,5 +1097,12 @@
         return escapeHtml(value);
 
     }
+
+    window.weddingPlannerAddCivilMomentSong =
+        addCivilMomentExtraSong;
+    window.weddingPlannerRemoveCivilMoment =
+        removeCivilMomentAt;
+    window.weddingPlannerRemoveCivilMomentSong =
+        removeCivilMomentExtraSong;
 
 }());
