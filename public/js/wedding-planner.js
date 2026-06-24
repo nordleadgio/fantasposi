@@ -631,6 +631,45 @@
                 </article>
             `).join("");
 
+        bindCivilMomentFields();
+
+    }
+
+    function bindCivilMomentFields() {
+
+        $$("[data-civil-moment-field], [data-civil-moment-song-field], [data-civil-moment-extra-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                handleDynamicField(input, true);
+            });
+        });
+
+        $$("[data-add-civil-moment-song]").forEach(button => {
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                event.stopPropagation();
+                addCivilMomentExtraSong(Number(button.dataset.addCivilMomentSong));
+            });
+        });
+
+        $$("[data-remove-civil-moment]").forEach(button => {
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                event.stopPropagation();
+                removeCivilMomentAt(Number(button.dataset.removeCivilMoment));
+            });
+        });
+
+        $$("[data-remove-civil-moment-song]").forEach(button => {
+            button.addEventListener("click", event => {
+                event.preventDefault();
+                event.stopPropagation();
+                removeCivilMomentExtraSong(
+                    Number(button.dataset.removeCivilMomentSong),
+                    Number(button.dataset.removeCivilMomentSongIndex)
+                );
+            });
+        });
+
     }
 
     function addCivilMomentExtraSong(momentIndex) {
