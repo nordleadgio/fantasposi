@@ -109,25 +109,56 @@
                         <span>Ingresso separato degli sposi</span>
                     </label>
                     <div class="conditional songBlock" data-visible-when="ceremony.civilSeparateEntrances">
-                        <h3>Ingresso sposo</h3>
+                        <div class="songBlockHeader">
+                            <h3>Ingresso sposo</h3>
+                            <button class="ghostButton" type="button" data-add-extra-song="groomEntranceExtraSongs">Aggiungi brano</button>
+                        </div>
                         <div data-song="ceremony.groomEntranceSong"></div>
+                        <div data-extra-songs="groomEntranceExtraSongs"></div>
                     </div>
                     <div class="conditional songBlock" data-visible-when="ceremony.civilSeparateEntrances">
-                        <h3>Ingresso sposa</h3>
+                        <div class="songBlockHeader">
+                            <h3>Ingresso sposa</h3>
+                            <button class="ghostButton" type="button" data-add-extra-song="brideEntranceExtraSongs">Aggiungi brano</button>
+                        </div>
                         <div data-song="ceremony.brideEntranceSong"></div>
+                        <div data-extra-songs="brideEntranceExtraSongs"></div>
                     </div>
                     <div class="conditional songBlock" data-hidden-when="ceremony.civilSeparateEntrances">
-                        <h3>Ingresso insieme</h3>
+                        <div class="songBlockHeader">
+                            <h3>Ingresso insieme</h3>
+                            <button class="ghostButton" type="button" data-add-extra-song="jointEntranceExtraSongs">Aggiungi brano</button>
+                        </div>
                         <div data-song="ceremony.jointEntranceSong"></div>
+                        <div data-extra-songs="jointEntranceExtraSongs"></div>
                     </div>
                     <div class="songBlock">
-                        <h3>Conclusione rito</h3>
+                        <div class="songBlockHeader">
+                            <h3>Conclusione rito</h3>
+                            <button class="ghostButton" type="button" data-add-extra-song="ceremonyClosingExtraSongs">Aggiungi brano</button>
+                        </div>
                         <div data-song="ceremony.ceremonyClosingSong"></div>
+                        <div data-extra-songs="ceremonyClosingExtraSongs"></div>
                     </div>
                     <div class="songBlock">
-                        <h3>Uscita sposi</h3>
+                        <div class="songBlockHeader">
+                            <h3>Uscita sposi</h3>
+                            <button class="ghostButton" type="button" data-add-extra-song="ceremonyExitExtraSongs">Aggiungi brano</button>
+                        </div>
                         <div data-song="ceremony.ceremonyExitSong"></div>
+                        <div data-extra-songs="ceremonyExitExtraSongs"></div>
                     </div>
+                    <div class="extraSongsHeader">
+                        <div>
+                            <h3>Momenti personalizzati</h3>
+                            <p>Potete aggiungere un momento non presente in scheda, ad esempio ingresso fedi o letture.</p>
+                        </div>
+                        <button class="secondaryButton" id="addCivilMoment" type="button">Aggiungi momento</button>
+                    </div>
+                    <div id="civilCustomMoments"></div>
+                    <label>Altre richieste o direttive per il rito civile
+                        <textarea data-field="ceremony.civilNotes" placeholder="Scrivete qui indicazioni, tempi, persone coinvolte o richieste particolari."></textarea>
+                    </label>
                 </div>
 
                 <div class="infoPanel conditional" data-visible-value="ceremony.type:religious">

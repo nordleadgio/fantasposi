@@ -36,6 +36,8 @@
         saveDraft: $("#saveDraft"),
         submitPlanner: $("#submitPlanner"),
         submitMessage: $("#submitMessage"),
+        civilCustomMoments: $("#civilCustomMoments"),
+        addCivilMoment: $("#addCivilMoment"),
         cakeExtraSongs: $("#cakeExtraSongs"),
         addCakeSong: $("#addCakeSong"),
         finalSummary: $("#finalSummary")
@@ -66,6 +68,12 @@
         });
         els.saveDraft.addEventListener("click", () => save(false, true));
         els.submitPlanner.addEventListener("click", () => save(true, true));
+        els.addCivilMoment.addEventListener("click", addCivilMoment);
+        $$("[data-add-extra-song]").forEach(button => {
+            button.addEventListener("click", () =>
+                addCeremonyExtraSong(button.dataset.addExtraSong)
+            );
+        });
         els.addCakeSong.addEventListener("click", addCakeSong);
 
         fetch(`/api/wedding-planner/public/${encodeURIComponent(token)}`)
@@ -80,6 +88,8 @@
                 answers = data.answers || createEmptyAnswers();
                 renderEvent();
                 hydrateFields();
+                renderCeremonyExtras();
+                renderCivilMoments();
                 renderCakeSongs();
                 renderConditionals();
 
@@ -107,7 +117,14 @@
                 civilSeparateEntrances: true,
                 startTime: "",
                 churchName: "",
-                churchTown: ""
+                churchTown: "",
+                groomEntranceExtraSongs: [],
+                brideEntranceExtraSongs: [],
+                jointEntranceExtraSongs: [],
+                ceremonyClosingExtraSongs: [],
+                ceremonyExitExtraSongs: [],
+                civilCustomMoments: [],
+                civilNotes: ""
             },
             reception: {
                 cakeExtraSongs: []
@@ -280,15 +297,269 @@
 
     }
 
+    function emptySong() {
+
+        return {
+            title: "",
+            artist: "",
+            youtubeUrl: ""
+        };
+
+    }
+
+    function addCeremonyExtraSong(key) {
+
+        answers.ceremony[key] =
+            Array.isArray(answers.ceremony[key]) ? answers.ceremony[key] : [];
+        answers.ceremony[key].push(emptySong());
+        renderCeremonyExtras();
+        scheduleSave();
+
+    }
+
+    function renderCeremonyExtras() {
+
+        $$("[data-extra-songs]").forEach(container => {
+            const key =
+                container.dataset.extraSongs;
+            const songs =
+                Array.isArray(answers.ceremony[key]) ? answers.ceremony[key] : [];
+
+            container.innerHTML =
+                songs.map((song, index) => extraSongHtml(key, song, index)).join("");
+        });
+
+        $$("[data-extra-song-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                const songs =
+                    answers.ceremony[input.dataset.extraSongKey] || [];
+                const song =
+                    songs[Number(input.dataset.extraSongIndex)];
+
+                if (!song) {
+                    return;
+                }
+
+                song[input.dataset.extraSongField] =
+                    input.value;
+                scheduleSave();
+            });
+        });
+
+        $$("[data-remove-extra-song]").forEach(button => {
+            button.addEventListener("click", () => {
+                const songs =
+                    answers.ceremony[button.dataset.removeExtraSong] || [];
+
+                songs.splice(Number(button.dataset.removeExtraSongIndex), 1);
+                renderCeremonyExtras();
+                scheduleSave();
+            });
+        });
+
+    }
+
+    function extraSongHtml(key, song, index) {
+
+        return `
+            <article class="songBlock compactSong nestedSong">
+                <div class="songBlockHeader">
+                    <h3>Brano aggiuntivo ${index + 1}</h3>
+                    <button class="ghostButton" type="button" data-remove-extra-song="${key}" data-remove-extra-song-index="${index}">Rimuovi</button>
+                </div>
+                <div class="songFields">
+                    <label>Canzone
+                        <input type="text" value="${escapeAttr(song.title)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="title">
+                    </label>
+                    <label>Artista
+                        <input type="text" value="${escapeAttr(song.artist)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="artist">
+                    </label>
+                    <label class="wide">Link YouTube
+                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="youtubeUrl">
+                    </label>
+                </div>
+            </article>
+        `;
+
+    }
+
+    function addCivilMoment() {
+
+        answers.ceremony.civilCustomMoments =
+            Array.isArray(answers.ceremony.civilCustomMoments) ?
+                answers.ceremony.civilCustomMoments :
+                [];
+        answers.ceremony.civilCustomMoments.push({
+            title: "",
+            song: emptySong(),
+            extraSongs: []
+        });
+        renderCivilMoments();
+        scheduleSave();
+
+    }
+
+    function renderCivilMoments() {
+
+        const moments =
+            Array.isArray(answers.ceremony.civilCustomMoments) ?
+                answers.ceremony.civilCustomMoments :
+                [];
+
+        els.civilCustomMoments.innerHTML =
+            moments.map((moment, index) => `
+                <article class="songBlock compactSong customMoment">
+                    <div class="songBlockHeader">
+                        <h3>Momento ${index + 1}</h3>
+                        <button class="ghostButton" type="button" data-remove-civil-moment="${index}">Rimuovi</button>
+                    </div>
+                    <label>Titolo del momento
+                        <input type="text" value="${escapeAttr(moment.title)}" data-civil-moment-index="${index}" data-civil-moment-field="title" placeholder="Es. Ingresso fedi">
+                    </label>
+                    <div class="songFields">
+                        <label>Canzone
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.title)}" data-civil-moment-index="${index}" data-civil-moment-song-field="title">
+                        </label>
+                        <label>Artista
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.artist)}" data-civil-moment-index="${index}" data-civil-moment-song-field="artist">
+                        </label>
+                        <label class="wide">Link YouTube
+                            <input type="url" value="${escapeAttr(moment.song && moment.song.youtubeUrl)}" data-civil-moment-index="${index}" data-civil-moment-song-field="youtubeUrl">
+                        </label>
+                    </div>
+                    <div data-civil-moment-extra-songs="${index}">
+                        ${(moment.extraSongs || []).map((song, songIndex) => `
+                            <article class="songBlock compactSong nestedSong">
+                                <div class="songBlockHeader">
+                                    <h3>Brano aggiuntivo ${songIndex + 1}</h3>
+                                    <button class="ghostButton" type="button" data-remove-civil-moment-song="${index}" data-remove-civil-moment-song-index="${songIndex}">Rimuovi</button>
+                                </div>
+                                <div class="songFields">
+                                    <label>Canzone
+                                        <input type="text" value="${escapeAttr(song.title)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="title">
+                                    </label>
+                                    <label>Artista
+                                        <input type="text" value="${escapeAttr(song.artist)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="artist">
+                                    </label>
+                                    <label class="wide">Link YouTube
+                                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-civil-moment-index="${index}" data-civil-moment-extra-index="${songIndex}" data-civil-moment-extra-field="youtubeUrl">
+                                    </label>
+                                </div>
+                            </article>
+                        `).join("")}
+                    </div>
+                    <button class="secondaryButton" type="button" data-add-civil-moment-song="${index}">Aggiungi brano</button>
+                </article>
+            `).join("");
+
+        bindCivilMomentFields();
+
+    }
+
+    function bindCivilMomentFields() {
+
+        $$("[data-civil-moment-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                const moment =
+                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
+
+                if (!moment) {
+                    return;
+                }
+
+                moment[input.dataset.civilMomentField] =
+                    input.value;
+                scheduleSave();
+            });
+        });
+
+        $$("[data-civil-moment-song-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                const moment =
+                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
+
+                if (!moment) {
+                    return;
+                }
+
+                moment.song =
+                    moment.song || emptySong();
+                moment.song[input.dataset.civilMomentSongField] =
+                    input.value;
+                scheduleSave();
+            });
+        });
+
+        $$("[data-civil-moment-extra-field]").forEach(input => {
+            input.addEventListener("input", () => {
+                const moment =
+                    answers.ceremony.civilCustomMoments[Number(input.dataset.civilMomentIndex)];
+                const song =
+                    moment && moment.extraSongs[Number(input.dataset.civilMomentExtraIndex)];
+
+                if (!song) {
+                    return;
+                }
+
+                song[input.dataset.civilMomentExtraField] =
+                    input.value;
+                scheduleSave();
+            });
+        });
+
+        $$("[data-add-civil-moment-song]").forEach(button => {
+            button.addEventListener("click", () => {
+                const moment =
+                    answers.ceremony.civilCustomMoments[Number(button.dataset.addCivilMomentSong)];
+
+                if (!moment) {
+                    return;
+                }
+
+                moment.extraSongs =
+                    Array.isArray(moment.extraSongs) ? moment.extraSongs : [];
+                moment.extraSongs.push(emptySong());
+                renderCivilMoments();
+                scheduleSave();
+            });
+        });
+
+        $$("[data-remove-civil-moment]").forEach(button => {
+            button.addEventListener("click", () => {
+                answers.ceremony.civilCustomMoments.splice(
+                    Number(button.dataset.removeCivilMoment),
+                    1
+                );
+                renderCivilMoments();
+                scheduleSave();
+            });
+        });
+
+        $$("[data-remove-civil-moment-song]").forEach(button => {
+            button.addEventListener("click", () => {
+                const moment =
+                    answers.ceremony.civilCustomMoments[Number(button.dataset.removeCivilMomentSong)];
+
+                if (!moment || !Array.isArray(moment.extraSongs)) {
+                    return;
+                }
+
+                moment.extraSongs.splice(
+                    Number(button.dataset.removeCivilMomentSongIndex),
+                    1
+                );
+                renderCivilMoments();
+                scheduleSave();
+            });
+        });
+
+    }
+
     function addCakeSong() {
 
         answers.reception.cakeExtraSongs =
             answers.reception.cakeExtraSongs || [];
-        answers.reception.cakeExtraSongs.push({
-            title: "",
-            artist: "",
-            youtubeUrl: ""
-        });
+        answers.reception.cakeExtraSongs.push(emptySong());
         renderCakeSongs();
         scheduleSave();
 
@@ -480,10 +751,33 @@
                 data.ceremony.type === "religious" && data.ceremony.churchName && `Chiesa: ${data.ceremony.churchName}`,
                 data.ceremony.type === "religious" && data.ceremony.churchTown && `Paese chiesa: ${data.ceremony.churchTown}`,
                 songLine("Ingresso sposo", data.ceremony.groomEntranceSong),
+                ...(data.ceremony.groomEntranceExtraSongs || []).map((song, index) =>
+                    songLine(`Ingresso sposo - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Ingresso sposa", data.ceremony.brideEntranceSong),
+                ...(data.ceremony.brideEntranceExtraSongs || []).map((song, index) =>
+                    songLine(`Ingresso sposa - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Ingresso insieme", data.ceremony.jointEntranceSong),
+                ...(data.ceremony.jointEntranceExtraSongs || []).map((song, index) =>
+                    songLine(`Ingresso insieme - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Conclusione rito", data.ceremony.ceremonyClosingSong),
+                ...(data.ceremony.ceremonyClosingExtraSongs || []).map((song, index) =>
+                    songLine(`Conclusione rito - brano aggiuntivo ${index + 1}`, song)
+                ),
                 songLine("Uscita sposi", data.ceremony.ceremonyExitSong),
+                ...(data.ceremony.ceremonyExitExtraSongs || []).map((song, index) =>
+                    songLine(`Uscita sposi - brano aggiuntivo ${index + 1}`, song)
+                ),
+                ...(data.ceremony.civilCustomMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    songLine(moment.title || `Momento personalizzato ${index + 1}`, moment.song),
+                    ...((moment.extraSongs || []).map((song, songIndex) =>
+                        songLine(`${moment.title || `Momento personalizzato ${index + 1}`} - brano aggiuntivo ${songIndex + 1}`, song)
+                    ))
+                ]),
+                data.ceremony.civilNotes && `Altre richieste rito civile: ${data.ceremony.civilNotes}`,
                 data.ceremony.religiousNotes
             ])}
             ${summarySection("Best Moment", [

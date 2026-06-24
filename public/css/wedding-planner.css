@@ -746,6 +746,16 @@ h2 {
     margin-top: 10px;
 }
 
+.nestedSong {
+    border-style: dashed;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(250, 246, 241, 0.78));
+}
+
+.customMoment {
+    border-color: rgba(91, 123, 105, 0.34);
+}
+
 .momentGrid {
     display: grid;
     gap: 12px;

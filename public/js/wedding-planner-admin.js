@@ -481,10 +481,33 @@
                 ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
                 ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
                 song("Ingresso sposo", ceremony.groomEntranceSong),
+                ...((ceremony.groomEntranceExtraSongs || []).map((item, index) =>
+                    song(`Ingresso sposo - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Ingresso sposa", ceremony.brideEntranceSong),
+                ...((ceremony.brideEntranceExtraSongs || []).map((item, index) =>
+                    song(`Ingresso sposa - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Ingresso insieme", ceremony.jointEntranceSong),
+                ...((ceremony.jointEntranceExtraSongs || []).map((item, index) =>
+                    song(`Ingresso insieme - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Conclusione rito", ceremony.ceremonyClosingSong),
+                ...((ceremony.ceremonyClosingExtraSongs || []).map((item, index) =>
+                    song(`Conclusione rito - brano aggiuntivo ${index + 1}`, item)
+                )),
                 song("Uscita sposi", ceremony.ceremonyExitSong),
+                ...((ceremony.ceremonyExitExtraSongs || []).map((item, index) =>
+                    song(`Uscita sposi - brano aggiuntivo ${index + 1}`, item)
+                )),
+                ...((ceremony.civilCustomMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    song(moment.title || `Momento personalizzato ${index + 1}`, moment.song),
+                    ...((moment.extraSongs || []).map((item, songIndex) =>
+                        song(`${moment.title || `Momento personalizzato ${index + 1}`} - brano aggiuntivo ${songIndex + 1}`, item)
+                    ))
+                ])),
+                ceremony.civilNotes && `Altre richieste rito civile: ${ceremony.civilNotes}`,
                 ceremony.religiousNotes && `Note rito: ${ceremony.religiousNotes}`
             ]),
             section("Best Moment", [

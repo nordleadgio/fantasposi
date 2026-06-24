@@ -187,6 +187,34 @@ function cleanSongList(value) {
 
 }
 
+function cleanCivilMomentList(value) {
+
+    if (!Array.isArray(value)) {
+        return [];
+    }
+
+    return value
+        .slice(0, 12)
+        .map(item => {
+            const moment =
+                safeObject(item);
+
+            return {
+                title: cleanText(moment.title, "", 180),
+                song: cleanSong(moment.song),
+                extraSongs: cleanSongList(moment.extraSongs)
+            };
+        })
+        .filter(moment =>
+            moment.title ||
+            moment.song.title ||
+            moment.song.artist ||
+            moment.song.youtubeUrl ||
+            moment.extraSongs.length
+        );
+
+}
+
 function createEmptyAnswers() {
 
     return {
@@ -209,6 +237,13 @@ function createEmptyAnswers() {
             jointEntranceSong: cleanSong({}),
             ceremonyClosingSong: cleanSong({}),
             ceremonyExitSong: cleanSong({}),
+            groomEntranceExtraSongs: [],
+            brideEntranceExtraSongs: [],
+            jointEntranceExtraSongs: [],
+            ceremonyClosingExtraSongs: [],
+            ceremonyExitExtraSongs: [],
+            civilCustomMoments: [],
+            civilNotes: "",
             religiousNotes: ""
         },
         reception: {
@@ -270,6 +305,13 @@ function cleanAnswers(value) {
         jointEntranceSong: cleanSong(ceremony.jointEntranceSong),
         ceremonyClosingSong: cleanSong(ceremony.ceremonyClosingSong),
         ceremonyExitSong: cleanSong(ceremony.ceremonyExitSong),
+        groomEntranceExtraSongs: cleanSongList(ceremony.groomEntranceExtraSongs),
+        brideEntranceExtraSongs: cleanSongList(ceremony.brideEntranceExtraSongs),
+        jointEntranceExtraSongs: cleanSongList(ceremony.jointEntranceExtraSongs),
+        ceremonyClosingExtraSongs: cleanSongList(ceremony.ceremonyClosingExtraSongs),
+        ceremonyExitExtraSongs: cleanSongList(ceremony.ceremonyExitExtraSongs),
+        civilCustomMoments: cleanCivilMomentList(ceremony.civilCustomMoments),
+        civilNotes: cleanLongText(ceremony.civilNotes, "", 1600),
         religiousNotes: cleanLongText(ceremony.religiousNotes, "", 1000)
     };
 
@@ -457,10 +499,33 @@ function summaryLines(event) {
                 ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
                 ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
                 songLabel("Ingresso sposo", ceremony.groomEntranceSong),
+                ...((ceremony.groomEntranceExtraSongs || []).map((song, index) =>
+                    songLabel(`Ingresso sposo - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Ingresso sposa", ceremony.brideEntranceSong),
+                ...((ceremony.brideEntranceExtraSongs || []).map((song, index) =>
+                    songLabel(`Ingresso sposa - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Ingresso insieme", ceremony.jointEntranceSong),
+                ...((ceremony.jointEntranceExtraSongs || []).map((song, index) =>
+                    songLabel(`Ingresso insieme - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Conclusione rito", ceremony.ceremonyClosingSong),
+                ...((ceremony.ceremonyClosingExtraSongs || []).map((song, index) =>
+                    songLabel(`Conclusione rito - brano aggiuntivo ${index + 1}`, song)
+                )),
                 songLabel("Uscita sposi", ceremony.ceremonyExitSong),
+                ...((ceremony.ceremonyExitExtraSongs || []).map((song, index) =>
+                    songLabel(`Uscita sposi - brano aggiuntivo ${index + 1}`, song)
+                )),
+                ...((ceremony.civilCustomMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    songLabel(moment.title || `Momento personalizzato ${index + 1}`, moment.song),
+                    ...((moment.extraSongs || []).map((song, songIndex) =>
+                        songLabel(`${moment.title || `Momento personalizzato ${index + 1}`} - brano aggiuntivo ${songIndex + 1}`, song)
+                    ))
+                ])),
+                ceremony.civilNotes && `Altre richieste rito civile: ${ceremony.civilNotes}`,
                 ceremony.religiousNotes && `Note rito: ${ceremony.religiousNotes}`
             ]
         },
