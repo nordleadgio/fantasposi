@@ -148,7 +148,7 @@
             .then(response => response.json())
             .then(data => {
                 events =
-                    Array.isArray(data) ? data : [];
+                    sortEvents(Array.isArray(data) ? data : []);
                 renderEvents();
 
                 if (selectedToken) {
@@ -191,6 +191,42 @@
                 els.newIntro.value = "";
                 loadEvents();
             });
+
+    }
+
+    function sortEvents(list) {
+
+        return [...list].sort((left, right) => {
+            const leftDate =
+                sortableDate(left.weddingDate);
+            const rightDate =
+                sortableDate(right.weddingDate);
+
+            if (leftDate !== rightDate) {
+                return leftDate - rightDate;
+            }
+
+            return String(left.title || "").localeCompare(
+                String(right.title || ""),
+                "it",
+                {
+                    sensitivity: "base"
+                }
+            );
+        });
+
+    }
+
+    function sortableDate(value) {
+
+        if (!value) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+
+        const time =
+            new Date(`${value}T00:00:00`).getTime();
+
+        return Number.isNaN(time) ? Number.MAX_SAFE_INTEGER : time;
 
     }
 
@@ -352,9 +388,9 @@
             })
             .then(updated => {
                 events =
-                    events.map(item =>
+                    sortEvents(events.map(item =>
                         item.token === updated.token ? updated : item
-                    );
+                    ));
                 selectEvent(updated.token);
                 showAdminSaveMessage("Modifiche admin salvate.", "success");
             })
@@ -463,9 +499,9 @@
                 }
 
                 events =
-                    events.filter(item =>
+                    sortEvents(events.filter(item =>
                         item.token !== selectedToken
-                    );
+                    ));
                 selectedToken =
                     events[0] ? events[0].token : "";
                 renderEvents();
