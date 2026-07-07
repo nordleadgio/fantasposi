@@ -77,6 +77,22 @@ label textarea {
     margin-top: 7px;
 }
 
+.adminPrivateNotes span {
+    display: block;
+    margin-top: 4px;
+    color: rgba(112, 112, 118, 0.86);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.adminPrivateNotes textarea {
+    min-height: 130px;
+    border-color: rgba(184, 138, 68, 0.42);
+    background:
+        linear-gradient(135deg, rgba(184, 138, 68, 0.12), rgba(255, 255, 255, 0.9)),
+        rgba(255, 255, 255, 0.92);
+}
+
 h1,
 h2,
 h3,

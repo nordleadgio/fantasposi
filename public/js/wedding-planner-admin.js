@@ -42,7 +42,7 @@
         editDate: $("editDate"),
         editVenue: $("editVenue"),
         editIntro: $("editIntro"),
-        editAdminCeremonyNotes: $("editAdminCeremonyNotes"),
+        editAdminInternalNotes: $("editAdminInternalNotes"),
         saveEvent: $("saveEvent"),
         answersSummary: $("answersSummary")
     };
@@ -263,8 +263,8 @@
             event.venue || "";
         els.editIntro.value =
             event.introMessage || "";
-        els.editAdminCeremonyNotes.value =
-            event.adminCeremonyNotes || "";
+        els.editAdminInternalNotes.value =
+            event.adminInternalNotes || event.adminCeremonyNotes || "";
         els.answersSummary.innerHTML =
             buildSummary(event.answers || {});
         renderEvents();
@@ -334,7 +334,7 @@
                     weddingDate: els.editDate.value,
                     venue: els.editVenue.value,
                     introMessage: els.editIntro.value,
-                    adminCeremonyNotes: els.editAdminCeremonyNotes.value
+                    adminInternalNotes: els.editAdminInternalNotes.value
                 })
             }
         )

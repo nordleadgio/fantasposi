@@ -366,6 +366,11 @@ function normalizeEvent(event) {
         ),
         status: cleanText(source.status, "bozza", 40),
         adminCeremonyNotes: cleanLongText(source.adminCeremonyNotes, "", 1600),
+        adminInternalNotes: cleanLongText(
+            source.adminInternalNotes || source.adminCeremonyNotes,
+            "",
+            3000
+        ),
         answers: cleanAnswers(source.answers),
         createdAt: cleanText(source.createdAt, new Date().toISOString(), 80),
         updatedAt: cleanText(source.updatedAt, new Date().toISOString(), 80),
@@ -390,7 +395,6 @@ function publicEvent(event) {
         weddingDate: event.weddingDate,
         venue: event.venue,
         introMessage: event.introMessage,
-        adminCeremonyNotes: event.adminCeremonyNotes,
         answers: event.answers,
         status: event.status,
         submittedAt: event.submittedAt
@@ -1019,6 +1023,8 @@ function installWeddingPlanner(app) {
         event.status = cleanText(body.status, event.status, 40);
         event.adminCeremonyNotes =
             cleanLongText(body.adminCeremonyNotes, event.adminCeremonyNotes, 1600);
+        event.adminInternalNotes =
+            cleanLongText(body.adminInternalNotes, event.adminInternalNotes, 3000);
 
         if (body.answers) {
             event.answers =

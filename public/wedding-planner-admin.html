@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/wedding-planner.css?v=20260708-summary-fix">
+<link rel="stylesheet" href="/css/wedding-planner.css?v=20260708-admin-notes">
 </head>
 <body class="plannerAdminBody">
 <section class="loginGate" id="loginGate">
@@ -128,8 +128,9 @@
                     <label class="wide">Messaggio iniziale
                         <textarea id="editIntro"></textarea>
                     </label>
-                    <label class="wide">Note admin per rito religioso
-                        <textarea id="editAdminCeremonyNotes" placeholder="Qui puoi segnare accordi con parroco/chiesa o brani da compilare tu."></textarea>
+                    <label class="wide adminPrivateNotes">Note interne admin
+                        <span>Private, visibili solo da questo pannello.</span>
+                        <textarea id="editAdminInternalNotes" placeholder="Appunti per telefonate, accordi, cose da ricordare o richieste da gestire noi."></textarea>
                     </label>
                 </div>
                 <button class="primaryButton" id="saveEvent" type="button">Salva modifiche admin</button>
@@ -146,6 +147,6 @@
     </section>
 </main>
 
-<script src="/js/wedding-planner-admin.js?v=20260708-summary-fix"></script>
+<script src="/js/wedding-planner-admin.js?v=20260708-admin-notes"></script>
 </body>
 </html>
