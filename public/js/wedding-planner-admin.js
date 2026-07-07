@@ -44,6 +44,7 @@
         editIntro: $("editIntro"),
         editAdminInternalNotes: $("editAdminInternalNotes"),
         saveEvent: $("saveEvent"),
+        adminSaveMessage: $("adminSaveMessage"),
         answersSummary: $("answersSummary")
     };
 
@@ -266,7 +267,8 @@
         els.editAdminInternalNotes.value =
             event.adminInternalNotes || event.adminCeremonyNotes || "";
         els.answersSummary.innerHTML =
-            buildSummary(event.answers || {});
+            buildSummary(event);
+        clearAdminSaveMessage();
         renderEvents();
         loadQr(event.token);
 
@@ -321,6 +323,10 @@
             return;
         }
 
+        showAdminSaveMessage("Salvataggio modifiche admin in corso...", "loading");
+        els.saveEvent.disabled =
+            true;
+
         fetch(
             `/api/wedding-planner/events/${encodeURIComponent(selectedToken)}`,
             {
@@ -338,13 +344,29 @@
                 })
             }
         )
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Salvataggio non riuscito");
+                }
+                return response.json();
+            })
             .then(updated => {
                 events =
                     events.map(item =>
                         item.token === updated.token ? updated : item
                     );
                 selectEvent(updated.token);
+                showAdminSaveMessage("Modifiche admin salvate.", "success");
+            })
+            .catch(() => {
+                showAdminSaveMessage(
+                    "Non sono riuscito a salvare le modifiche. Riprova.",
+                    "error"
+                );
+            })
+            .finally(() => {
+                els.saveEvent.disabled =
+                    false;
             });
 
     }
@@ -455,7 +477,31 @@
 
     }
 
-    function buildSummary(data) {
+    function showAdminSaveMessage(message, type) {
+
+        els.adminSaveMessage.textContent =
+            message;
+        els.adminSaveMessage.dataset.type =
+            type;
+        els.adminSaveMessage.classList.add("isVisible");
+
+    }
+
+    function clearAdminSaveMessage() {
+
+        els.adminSaveMessage.textContent =
+            "";
+        els.adminSaveMessage.removeAttribute("data-type");
+        els.adminSaveMessage.classList.remove("isVisible");
+
+    }
+
+    function buildSummary(eventOrAnswers) {
+
+        const data =
+            eventOrAnswers.answers ? eventOrAnswers.answers : eventOrAnswers;
+        const adminInternalNotes =
+            eventOrAnswers.adminInternalNotes || eventOrAnswers.adminCeremonyNotes || "";
 
         const couple =
             data.couple || {};
@@ -538,6 +584,9 @@
                 ])),
                 special.dedications && textLine("Dediche", special.dedications),
                 special.otherRequests && textLine("Altre richieste", special.otherRequests)
+            ]),
+            section("Note interne admin", [
+                adminInternalNotes && textLine("Note private", adminInternalNotes)
             ])
         ].join("") || "<div class=\"emptyState\">Gli sposi non hanno ancora compilato la scheda.</div>";
 

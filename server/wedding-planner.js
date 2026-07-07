@@ -575,6 +575,13 @@ function summaryLines(event) {
                 special.dedications && `Dediche: ${special.dedications}`,
                 special.otherRequests && `Altre richieste: ${special.otherRequests}`
             ]
+        },
+        {
+            title: "Note interne admin",
+            rows: [
+                (event.adminInternalNotes || event.adminCeremonyNotes) &&
+                    `Note private: ${event.adminInternalNotes || event.adminCeremonyNotes}`
+            ]
         }
     ];
 
