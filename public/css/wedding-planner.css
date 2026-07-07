@@ -486,6 +486,33 @@ h2 {
     line-height: 1.45;
 }
 
+.summaryRow {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.42fr) minmax(0, 1fr);
+    gap: 8px 14px;
+    align-items: start;
+    padding: 9px 0;
+    border-top: 1px solid rgba(45, 35, 39, 0.08);
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.summaryRow:first-of-type {
+    border-top: 0;
+}
+
+.summaryLabel {
+    color: var(--ink);
+    font-weight: 900;
+}
+
+.summaryValue {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.summaryLink,
 .summarySection a {
     color: var(--wine);
     font-weight: 900;
@@ -805,6 +832,10 @@ h2 {
     line-height: 1.45;
 }
 
+.summaryBox .summaryRow {
+    grid-template-columns: minmax(110px, 0.38fr) minmax(0, 1fr);
+}
+
 .stepActions {
     margin-top: 20px;
     padding-top: 16px;
@@ -866,6 +897,12 @@ h2 {
         align-items: stretch;
         flex-direction: column;
         text-align: left;
+    }
+
+    .summaryRow,
+    .summaryBox .summaryRow {
+        grid-template-columns: 1fr;
+        gap: 4px;
     }
 
     .contractDownload .secondaryButton {
@@ -988,6 +1025,11 @@ h2 {
     }
 
     .summarySection p {
+        color: #222;
+    }
+
+    .summaryRow {
+        border-top-color: #ddd;
         color: #222;
     }
 }

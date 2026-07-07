@@ -507,8 +507,8 @@
                         song(`${moment.title || `Momento personalizzato ${index + 1}`} - brano aggiuntivo ${songIndex + 1}`, item)
                     ))
                 ])),
-                ceremony.civilNotes && `Altre richieste rito civile: ${ceremony.civilNotes}`,
-                ceremony.religiousNotes && `Note rito: ${ceremony.religiousNotes}`
+                ceremony.civilNotes && textLine("Altre richieste rito civile", ceremony.civilNotes),
+                ceremony.religiousNotes && textLine("Note rito", ceremony.religiousNotes)
             ]),
             section("Best Moments", [
                 song("Arrivo location", reception.arrivalSong),
@@ -536,8 +536,8 @@
                     moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
                     song(moment.title || `Momento personalizzato ${index + 1}`, moment.song)
                 ])),
-                special.dedications && `Dediche: ${special.dedications}`,
-                special.otherRequests && `Altre richieste: ${special.otherRequests}`
+                special.dedications && textLine("Dediche", special.dedications),
+                special.otherRequests && textLine("Altre richieste", special.otherRequests)
             ])
         ].join("") || "<div class=\"emptyState\">Gli sposi non hanno ancora compilato la scheda.</div>";
 
@@ -563,11 +563,32 @@
 
     function renderSummaryRow(row) {
 
-        if (typeof row === "object" && row.html) {
-            return `<p>${row.html}</p>`;
+        if (typeof row === "object" && row.type === "song") {
+            return `
+                <div class="summaryRow songSummaryRow">
+                    <span class="summaryLabel">${escapeHtml(row.label)}</span>
+                    <span class="summaryValue">
+                        ${escapeHtml(row.value)}
+                        ${row.url ? `<a class="summaryLink" href="${escapeHtml(row.url)}" target="_blank" rel="noopener noreferrer">Apri link</a>` : ""}
+                    </span>
+                </div>
+            `;
         }
 
-        return `<p>${escapeHtml(row)}</p>`;
+        if (typeof row === "object" && row.type === "text") {
+            return `
+                <div class="summaryRow textSummaryRow">
+                    <span class="summaryLabel">${escapeHtml(row.label)}</span>
+                    <span class="summaryValue">${linkifyText(row.value)}</span>
+                </div>
+            `;
+        }
+
+        if (typeof row === "object" && row.html) {
+            return `<div class="summaryRow">${row.html}</div>`;
+        }
+
+        return `<div class="summaryRow">${linkifyText(row)}</div>`;
 
     }
 
@@ -581,16 +602,50 @@
             [value.title, value.artist].filter(Boolean).join(" - ");
         const url =
             safeUrl(value.youtubeUrl);
-        const text =
-            `${label}: ${details || "brano indicato"}`;
+        return {
+            type: "song",
+            label,
+            value: details || "Brano indicato",
+            url
+        };
 
-        if (!url) {
-            return text;
-        }
+    }
+
+    function textLine(label, value) {
 
         return {
-            html: `${escapeHtml(text)} <a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Apri link YouTube</a>`
+            type: "text",
+            label,
+            value
         };
+
+    }
+
+    function linkifyText(value) {
+
+        const text =
+            String(value || "");
+        const urlPattern =
+            /(https?:\/\/[^\s<]+)/g;
+        let lastIndex =
+            0;
+        let html =
+            "";
+        let match;
+
+        while ((match = urlPattern.exec(text)) !== null) {
+            html +=
+                escapeHtml(text.slice(lastIndex, match.index));
+            html +=
+                `<a class="summaryLink" href="${escapeHtml(match[0])}" target="_blank" rel="noopener noreferrer">${escapeHtml(match[0])}</a>`;
+            lastIndex =
+                match.index + match[0].length;
+        }
+
+        html +=
+            escapeHtml(text.slice(lastIndex));
+
+        return html;
 
     }
 

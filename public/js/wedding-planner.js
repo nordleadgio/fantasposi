@@ -1128,8 +1128,8 @@
                         songLine(`${moment.title || `Momento personalizzato ${index + 1}`} - brano aggiuntivo ${songIndex + 1}`, song)
                     ))
                 ]),
-                data.ceremony.civilNotes && `Altre richieste rito civile: ${data.ceremony.civilNotes}`,
-                data.ceremony.religiousNotes
+                data.ceremony.civilNotes && textLine("Altre richieste rito civile", data.ceremony.civilNotes),
+                data.ceremony.religiousNotes && textLine("Note rito", data.ceremony.religiousNotes)
             ])}
             ${summarySection("Best Moments", [
                 songLine("Arrivo location", data.reception.arrivalSong),
@@ -1157,8 +1157,8 @@
                     moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
                     songLine(moment.title || `Momento personalizzato ${index + 1}`, moment.song)
                 ]),
-                data.specialMoments.dedications && `Dediche: ${data.specialMoments.dedications}`,
-                data.specialMoments.otherRequests && `Altre richieste: ${data.specialMoments.otherRequests}`
+                data.specialMoments.dedications && textLine("Dediche", data.specialMoments.dedications),
+                data.specialMoments.otherRequests && textLine("Altre richieste", data.specialMoments.otherRequests)
             ])}
         `;
 
@@ -1176,9 +1176,36 @@
         return `
             <article>
                 <h3>${escapeHtml(title)}</h3>
-                ${cleanRows.map(row => `<p>${escapeHtml(row)}</p>`).join("")}
+                ${cleanRows.map(renderSummaryRow).join("")}
             </article>
         `;
+
+    }
+
+    function renderSummaryRow(row) {
+
+        if (typeof row === "object" && row.type === "song") {
+            return `
+                <div class="summaryRow songSummaryRow">
+                    <span class="summaryLabel">${escapeHtml(row.label)}</span>
+                    <span class="summaryValue">
+                        ${escapeHtml(row.value)}
+                        ${row.url ? `<a class="summaryLink" href="${escapeHtml(row.url)}" target="_blank" rel="noopener noreferrer">Apri link</a>` : ""}
+                    </span>
+                </div>
+            `;
+        }
+
+        if (typeof row === "object" && row.type === "text") {
+            return `
+                <div class="summaryRow textSummaryRow">
+                    <span class="summaryLabel">${escapeHtml(row.label)}</span>
+                    <span class="summaryValue">${linkifyText(row.value)}</span>
+                </div>
+            `;
+        }
+
+        return `<div class="summaryRow">${linkifyText(row)}</div>`;
 
     }
 
@@ -1188,7 +1215,74 @@
             return "";
         }
 
-        return `${label}: ${[song.title, song.artist].filter(Boolean).join(" - ")}${song.youtubeUrl ? ` (${song.youtubeUrl})` : ""}`;
+        return {
+            type: "song",
+            label,
+            value: [song.title, song.artist].filter(Boolean).join(" - ") || "Brano indicato",
+            url: safeUrl(song.youtubeUrl)
+        };
+
+    }
+
+    function textLine(label, value) {
+
+        return {
+            type: "text",
+            label,
+            value
+        };
+
+    }
+
+    function linkifyText(value) {
+
+        const text =
+            String(value || "");
+        const urlPattern =
+            /(https?:\/\/[^\s<]+)/g;
+        let lastIndex =
+            0;
+        let html =
+            "";
+        let match;
+
+        while ((match = urlPattern.exec(text)) !== null) {
+            html +=
+                escapeHtml(text.slice(lastIndex, match.index));
+            html +=
+                `<a class="summaryLink" href="${escapeHtml(match[0])}" target="_blank" rel="noopener noreferrer">${escapeHtml(match[0])}</a>`;
+            lastIndex =
+                match.index + match[0].length;
+        }
+
+        html +=
+            escapeHtml(text.slice(lastIndex));
+
+        return html;
+
+    }
+
+    function safeUrl(value) {
+
+        const url =
+            String(value || "").trim();
+
+        if (!url) {
+            return "";
+        }
+
+        try {
+            const parsed =
+                new URL(url);
+
+            if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+                return "";
+            }
+
+            return parsed.href;
+        } catch {
+            return "";
+        }
 
     }
 
