@@ -506,6 +506,9 @@
 
     function addCeremonyExtraSong(key) {
 
+        syncStandardFieldsFromDom();
+        syncDynamicFieldsFromDom();
+
         answers.ceremony[key] =
             Array.isArray(answers.ceremony[key]) ? answers.ceremony[key] : [];
         answers.ceremony[key].push(emptySong());
@@ -545,6 +548,9 @@
 
         $$("[data-remove-extra-song]").forEach(button => {
             button.addEventListener("click", () => {
+                syncStandardFieldsFromDom();
+                syncDynamicFieldsFromDom();
+
                 const songs =
                     answers.ceremony[button.dataset.removeExtraSong] || [];
 
@@ -566,13 +572,13 @@
                 </div>
                 <div class="songFields">
                     <label>Canzone
-                        <input type="text" value="${escapeAttr(song.title)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="title">
+                        <input type="text" value="${escapeAttr(song.title)}" data-field="ceremony.${key}.${index}.title" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="title">
                     </label>
                     <label>Artista
-                        <input type="text" value="${escapeAttr(song.artist)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="artist">
+                        <input type="text" value="${escapeAttr(song.artist)}" data-field="ceremony.${key}.${index}.artist" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="artist">
                     </label>
                     <label class="wide">Link YouTube
-                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="youtubeUrl">
+                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-field="ceremony.${key}.${index}.youtubeUrl" data-extra-song-key="${key}" data-extra-song-index="${index}" data-extra-song-field="youtubeUrl">
                     </label>
                 </div>
             </article>
@@ -582,6 +588,7 @@
 
     function addCivilMoment() {
 
+        syncStandardFieldsFromDom();
         syncDynamicFieldsFromDom();
 
         answers.ceremony.civilCustomMoments =
@@ -694,6 +701,7 @@
 
     function addCivilMomentExtraSong(momentIndex) {
 
+        syncStandardFieldsFromDom();
         syncDynamicFieldsFromDom();
 
         const moment =
@@ -713,6 +721,7 @@
 
     function removeCivilMomentAt(momentIndex) {
 
+        syncStandardFieldsFromDom();
         syncDynamicFieldsFromDom();
 
         if (!Array.isArray(answers.ceremony.civilCustomMoments)) {
@@ -727,6 +736,7 @@
 
     function removeCivilMomentExtraSong(momentIndex, songIndex) {
 
+        syncStandardFieldsFromDom();
         syncDynamicFieldsFromDom();
 
         const moment =
@@ -808,6 +818,9 @@
 
     function addReceptionExtraSong(key) {
 
+        syncStandardFieldsFromDom();
+        syncDynamicFieldsFromDom();
+
         answers.reception[key] =
             Array.isArray(answers.reception[key]) ? answers.reception[key] : [];
         answers.reception[key].push(emptySong());
@@ -847,6 +860,9 @@
 
         $$("[data-remove-reception-extra]").forEach(button => {
             button.addEventListener("click", () => {
+                syncStandardFieldsFromDom();
+                syncDynamicFieldsFromDom();
+
                 const songs =
                     answers.reception[button.dataset.removeReceptionExtra] || [];
 
@@ -868,13 +884,13 @@
                 </div>
                 <div class="songFields">
                     <label>Canzone
-                        <input type="text" value="${escapeAttr(song.title)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="title">
+                        <input type="text" value="${escapeAttr(song.title)}" data-field="reception.${key}.${index}.title" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="title">
                     </label>
                     <label>Artista
-                        <input type="text" value="${escapeAttr(song.artist)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="artist">
+                        <input type="text" value="${escapeAttr(song.artist)}" data-field="reception.${key}.${index}.artist" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="artist">
                     </label>
                     <label class="wide">Link YouTube
-                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="youtubeUrl">
+                        <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-field="reception.${key}.${index}.youtubeUrl" data-reception-extra-key="${key}" data-reception-extra-index="${index}" data-reception-extra-field="youtubeUrl">
                     </label>
                 </div>
             </article>
@@ -883,6 +899,9 @@
     }
 
     function addCakeSong() {
+
+        syncStandardFieldsFromDom();
+        syncDynamicFieldsFromDom();
 
         answers.reception.cakeExtraSongs =
             answers.reception.cakeExtraSongs || [];
@@ -906,13 +925,13 @@
                     </div>
                     <div class="songFields">
                         <label>Canzone
-                            <input type="text" value="${escapeAttr(song.title)}" data-cake-index="${index}" data-cake-field="title">
+                            <input type="text" value="${escapeAttr(song.title)}" data-field="reception.cakeExtraSongs.${index}.title" data-cake-index="${index}" data-cake-field="title">
                         </label>
                         <label>Artista
-                            <input type="text" value="${escapeAttr(song.artist)}" data-cake-index="${index}" data-cake-field="artist">
+                            <input type="text" value="${escapeAttr(song.artist)}" data-field="reception.cakeExtraSongs.${index}.artist" data-cake-index="${index}" data-cake-field="artist">
                         </label>
                         <label class="wide">Link YouTube
-                            <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-cake-index="${index}" data-cake-field="youtubeUrl">
+                            <input type="url" value="${escapeAttr(song.youtubeUrl)}" data-field="reception.cakeExtraSongs.${index}.youtubeUrl" data-cake-index="${index}" data-cake-field="youtubeUrl">
                         </label>
                     </div>
                 </article>
@@ -930,6 +949,9 @@
 
         els.cakeExtraSongs.querySelectorAll("[data-remove-cake]").forEach(button => {
             button.addEventListener("click", () => {
+                syncStandardFieldsFromDom();
+                syncDynamicFieldsFromDom();
+
                 answers.reception.cakeExtraSongs.splice(
                     Number(button.dataset.removeCake),
                     1
