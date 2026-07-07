@@ -532,6 +532,10 @@
                 special.parentDance && song("Ballo genitori", special.parentDanceSong),
                 special.siblingDance && song("Ballo fratelli/sorelle", special.siblingDanceSong),
                 special.childrenDance && song("Ballo figli", special.childrenDanceSong),
+                ...((special.customMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    song(moment.title || `Momento personalizzato ${index + 1}`, moment.song)
+                ])),
                 special.dedications && `Dediche: ${special.dedications}`,
                 special.otherRequests && `Altre richieste: ${special.otherRequests}`
             ])

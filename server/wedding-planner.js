@@ -263,6 +263,7 @@ function createEmptyAnswers() {
             siblingDanceSong: cleanSong({}),
             childrenDance: false,
             childrenDanceSong: cleanSong({}),
+            customMoments: [],
             dedications: "",
             otherRequests: ""
         }
@@ -336,6 +337,7 @@ function cleanAnswers(value) {
         siblingDanceSong: cleanSong(specialMoments.siblingDanceSong),
         childrenDance: cleanBoolean(specialMoments.childrenDance),
         childrenDanceSong: cleanSong(specialMoments.childrenDanceSong),
+        customMoments: cleanCivilMomentList(specialMoments.customMoments),
         dedications: cleanLongText(specialMoments.dedications, "", 1600),
         otherRequests: cleanLongText(specialMoments.otherRequests, "", 1600)
     };
@@ -562,6 +564,10 @@ function summaryLines(event) {
                 special.parentDance && songLabel("Ballo genitori", special.parentDanceSong),
                 special.siblingDance && songLabel("Ballo fratelli/sorelle", special.siblingDanceSong),
                 special.childrenDance && songLabel("Ballo figli", special.childrenDanceSong),
+                ...((special.customMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    songLabel(moment.title || `Momento personalizzato ${index + 1}`, moment.song)
+                ])),
                 special.dedications && `Dediche: ${special.dedications}`,
                 special.otherRequests && `Altre richieste: ${special.otherRequests}`
             ]

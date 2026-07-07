@@ -203,7 +203,7 @@
                     <div data-song="reception.firstDanceSong"></div>
                     <div data-reception-extra-songs="firstDanceExtraSongs"></div>
                 </div>
-                <div class="songBlock bestMoment">
+                <div class="songBlock">
                     <div class="songBlockHeader">
                         <h3>Taglio torta - brano principale</h3>
                         <button class="ghostButton" id="addCakeSong" type="button">Aggiungi brano</button>
@@ -243,8 +243,15 @@
                 <label>Dediche
                     <textarea data-field="specialMoments.dedications" placeholder="Scrivete eventuali dediche, persone coinvolte o sorprese."></textarea>
                 </label>
+                <div class="extraSongsHeader">
+                    <div>
+                        <h3>Momenti personalizzati</h3>
+                    </div>
+                    <button class="secondaryButton" id="addSpecialMoment" type="button">AGGIUNGI UN MOMENTO</button>
+                </div>
+                <div id="specialCustomMoments"></div>
                 <label>Altre richieste
-                    <textarea data-field="specialMoments.otherRequests" placeholder="Tutto quello che volete segnalarci."></textarea>
+                    <textarea data-field="specialMoments.otherRequests" placeholder="Dicci cosa evitare e cose da fare."></textarea>
                 </label>
             </section>
 
@@ -271,6 +278,6 @@
     </section>
 </main>
 
-<script src="/js/wedding-planner.js?v=20260624-civil-moments-3"></script>
+<script src="/js/wedding-planner.js?v=20260707-special-moments"></script>
 </body>
 </html>

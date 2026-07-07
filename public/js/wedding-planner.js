@@ -38,6 +38,8 @@
         submitMessage: $("#submitMessage"),
         civilCustomMoments: $("#civilCustomMoments"),
         addCivilMoment: $("#addCivilMoment"),
+        specialCustomMoments: $("#specialCustomMoments"),
+        addSpecialMoment: $("#addSpecialMoment"),
         cakeExtraSongs: $("#cakeExtraSongs"),
         addCakeSong: $("#addCakeSong"),
         finalSummary: $("#finalSummary")
@@ -69,6 +71,7 @@
         els.saveDraft.addEventListener("click", () => save(false, true));
         els.submitPlanner.addEventListener("click", () => save(true, true));
         els.addCivilMoment.addEventListener("click", addCivilMoment);
+        els.addSpecialMoment.addEventListener("click", addSpecialMoment);
         $$("[data-add-extra-song]").forEach(button => {
             button.addEventListener("click", () =>
                 addCeremonyExtraSong(button.dataset.addExtraSong)
@@ -95,6 +98,7 @@
                 hydrateFields();
                 renderCeremonyExtras();
                 renderCivilMoments();
+                renderSpecialMoments();
                 renderReceptionExtras();
                 renderCakeSongs();
                 renderConditionals();
@@ -138,7 +142,9 @@
                 firstDanceExtraSongs: [],
                 cakeExtraSongs: []
             },
-            specialMoments: {}
+            specialMoments: {
+                customMoments: []
+            }
         };
 
     }
@@ -736,6 +742,70 @@
 
     }
 
+    function addSpecialMoment() {
+
+        syncStandardFieldsFromDom();
+
+        answers.specialMoments.customMoments =
+            Array.isArray(answers.specialMoments.customMoments) ?
+                answers.specialMoments.customMoments :
+                [];
+        answers.specialMoments.customMoments.push({
+            title: "",
+            song: emptySong()
+        });
+        renderSpecialMoments();
+        scheduleSave();
+
+    }
+
+    function renderSpecialMoments() {
+
+        const moments =
+            Array.isArray(answers.specialMoments.customMoments) ?
+                answers.specialMoments.customMoments :
+                [];
+
+        els.specialCustomMoments.innerHTML =
+            moments.map((moment, index) => `
+                <article class="songBlock compactSong customMoment">
+                    <div class="songBlockHeader">
+                        <h3>Momento ${index + 1}</h3>
+                        <button class="ghostButton" type="button" onclick="event.preventDefault(); event.stopImmediatePropagation(); window.weddingPlannerRemoveSpecialMoment(${index}); return false;">Rimuovi</button>
+                    </div>
+                    <label>Titolo del momento
+                        <input type="text" value="${escapeAttr(moment.title)}" data-field="specialMoments.customMoments.${index}.title" placeholder="Es. Brindisi, sorpresa, dedica">
+                    </label>
+                    <div class="songFields">
+                        <label>Canzone
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.title)}" data-field="specialMoments.customMoments.${index}.song.title">
+                        </label>
+                        <label>Artista
+                            <input type="text" value="${escapeAttr(moment.song && moment.song.artist)}" data-field="specialMoments.customMoments.${index}.song.artist">
+                        </label>
+                        <label class="wide">Link YouTube
+                            <input type="url" value="${escapeAttr(moment.song && moment.song.youtubeUrl)}" data-field="specialMoments.customMoments.${index}.song.youtubeUrl">
+                        </label>
+                    </div>
+                </article>
+            `).join("");
+
+    }
+
+    function removeSpecialMomentAt(momentIndex) {
+
+        syncStandardFieldsFromDom();
+
+        if (!Array.isArray(answers.specialMoments.customMoments)) {
+            return;
+        }
+
+        answers.specialMoments.customMoments.splice(momentIndex, 1);
+        renderSpecialMoments();
+        scheduleSave();
+
+    }
+
     function addReceptionExtraSong(key) {
 
         answers.reception[key] =
@@ -1061,6 +1131,10 @@
                 data.specialMoments.parentDance && songLine("Ballo genitori", data.specialMoments.parentDanceSong),
                 data.specialMoments.siblingDance && songLine("Ballo fratelli/sorelle", data.specialMoments.siblingDanceSong),
                 data.specialMoments.childrenDance && songLine("Ballo figli", data.specialMoments.childrenDanceSong),
+                ...(data.specialMoments.customMoments || []).flatMap((moment, index) => [
+                    moment.title && `Momento personalizzato ${index + 1}: ${moment.title}`,
+                    songLine(moment.title || `Momento personalizzato ${index + 1}`, moment.song)
+                ]),
                 data.specialMoments.dedications && `Dediche: ${data.specialMoments.dedications}`,
                 data.specialMoments.otherRequests && `Altre richieste: ${data.specialMoments.otherRequests}`
             ])}
@@ -1119,5 +1193,7 @@
         removeCivilMomentAt;
     window.weddingPlannerRemoveCivilMomentSong =
         removeCivilMomentExtraSong;
+    window.weddingPlannerRemoveSpecialMoment =
+        removeSpecialMomentAt;
 
 }());
