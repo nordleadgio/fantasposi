@@ -269,21 +269,74 @@
 
         els.eventList.innerHTML =
             events.map(event => `
-                <button class="eventRow ${event.weddingWorkflowStatus === "done" ? "isDone" : ""} ${event.token === selectedToken ? "selected" : ""}" type="button" data-token="${event.token}">
-                    <span>${escapeHtml(event.title)}</span>
-                    <strong>${escapeHtml(event.status || "bozza")}</strong>
-                    <em>${escapeHtml(workflowLabel(event.weddingWorkflowStatus))}</em>
-                    <small>${escapeHtml([event.weddingDate, event.venue].filter(Boolean).join(" - ") || "Senza data")}</small>
-                </button>
+                <article class="eventRow ${event.weddingWorkflowStatus === "done" ? "isDone" : ""} ${event.token === selectedToken ? "selected" : ""}">
+                    <button class="eventOpenButton" type="button" data-open-token="${event.token}">
+                        <span>${escapeHtml(event.title)}</span>
+                        <strong>${escapeHtml(event.status || "bozza")}</strong>
+                        <em>${escapeHtml(workflowLabel(event.weddingWorkflowStatus))}</em>
+                        <small>${escapeHtml([event.weddingDate, event.venue].filter(Boolean).join(" - ") || "Senza data")}</small>
+                    </button>
+                    <button class="workflowToggleButton" type="button" data-toggle-workflow-token="${event.token}">
+                        ${event.weddingWorkflowStatus === "done" ? "Rimetti da fare" : "Segna gi\u00e0 fatto"}
+                    </button>
+                </article>
             `).join("");
 
-        els.eventList.querySelectorAll("[data-token]").forEach(button => {
-            button.addEventListener("click", () => selectEvent(button.dataset.token));
+        els.eventList.querySelectorAll("[data-open-token]").forEach(button => {
+            button.addEventListener("click", () => selectEvent(button.dataset.openToken));
+        });
+
+        els.eventList.querySelectorAll("[data-toggle-workflow-token]").forEach(button => {
+            button.addEventListener("click", () => toggleWeddingWorkflow(button.dataset.toggleWorkflowToken));
         });
 
         if (!selectedToken) {
             selectEvent(events[0].token);
         }
+
+    }
+
+    function toggleWeddingWorkflow(token) {
+
+        const event =
+            events.find(item => item.token === token);
+
+        if (!event) {
+            return;
+        }
+
+        const nextStatus =
+            event.weddingWorkflowStatus === "done" ? "todo" : "done";
+
+        fetch(
+            `/api/wedding-planner/events/${encodeURIComponent(token)}`,
+            {
+                method: "PUT",
+                headers: headers(),
+                body: JSON.stringify({
+                    weddingWorkflowStatus: nextStatus
+                })
+            }
+        )
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Cambio stato non riuscito");
+                }
+                return response.json();
+            })
+            .then(updated => {
+                events =
+                    sortEvents(events.map(item =>
+                        item.token === updated.token ? updated : item
+                    ));
+                selectedToken =
+                    updated.token;
+                renderEvents();
+                selectEvent(updated.token);
+            })
+            .catch(() => {
+                window.alert("Non sono riuscito a cambiare lo stato del matrimonio. Riprova.");
+            });
 
     }
 

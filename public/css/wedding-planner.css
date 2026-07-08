@@ -404,14 +404,24 @@ h2 {
 
 .eventRow {
     display: grid;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 4px 14px;
     padding: 14px;
-    text-align: left;
     overflow: hidden;
     position: relative;
     background:
         linear-gradient(135deg, rgba(255, 253, 249, 0.94), rgba(255, 255, 255, 0.78));
+}
+
+.eventOpenButton {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 4px 14px;
+    min-width: 0;
+    padding: 0;
+    text-align: left;
+    background: transparent;
+    color: inherit;
 }
 
 .eventRow.selected {
@@ -436,22 +446,22 @@ h2 {
     background: linear-gradient(#7a7a80, #b7afa7);
 }
 
-.eventRow span {
+.eventOpenButton span {
     font-weight: 900;
 }
 
-.eventRow strong {
+.eventOpenButton strong {
     color: var(--wine);
     font-size: 0.8rem;
     text-transform: uppercase;
 }
 
-.eventRow small {
+.eventOpenButton small {
     grid-column: 1 / -1;
     color: var(--muted);
 }
 
-.eventRow em {
+.eventOpenButton em {
     justify-self: end;
     border-radius: 999px;
     padding: 4px 9px;
@@ -463,8 +473,25 @@ h2 {
     text-transform: uppercase;
 }
 
-.eventRow.isDone em {
+.eventRow.isDone .eventOpenButton em {
     background: rgba(112, 112, 118, 0.16);
+    color: var(--muted);
+}
+
+.workflowToggleButton {
+    align-self: center;
+    border: 1px solid rgba(184, 138, 68, 0.34);
+    border-radius: 999px;
+    padding: 8px 11px;
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--wine);
+    font-size: 0.76rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.eventRow.isDone .workflowToggleButton {
+    border-color: rgba(112, 112, 118, 0.26);
     color: var(--muted);
 }
 
@@ -973,10 +1000,20 @@ h2 {
 
     .copyLine,
     .editGrid,
+    .eventOpenButton,
     .fieldsGrid,
     .songFields,
     .choiceGrid {
         grid-template-columns: 1fr;
+    }
+
+    .eventRow {
+        grid-template-columns: 1fr;
+    }
+
+    .workflowToggleButton {
+        justify-self: start;
+        white-space: normal;
     }
 
     .wide {
