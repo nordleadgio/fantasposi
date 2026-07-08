@@ -37,6 +37,7 @@
         deleteEvent: $("deleteEvent"),
         editTitle: $("editTitle"),
         editStatus: $("editStatus"),
+        editWeddingWorkflowStatus: $("editWeddingWorkflowStatus"),
         editGroom: $("editGroom"),
         editBride: $("editBride"),
         editDate: $("editDate"),
@@ -197,6 +198,15 @@
     function sortEvents(list) {
 
         return [...list].sort((left, right) => {
+            const leftWorkflow =
+                workflowRank(left.weddingWorkflowStatus);
+            const rightWorkflow =
+                workflowRank(right.weddingWorkflowStatus);
+
+            if (leftWorkflow !== rightWorkflow) {
+                return leftWorkflow - rightWorkflow;
+            }
+
             const leftDate =
                 sortableDate(left.weddingDate);
             const rightDate =
@@ -214,6 +224,18 @@
                 }
             );
         });
+
+    }
+
+    function workflowRank(value) {
+
+        return value === "done" ? 1 : 0;
+
+    }
+
+    function workflowLabel(value) {
+
+        return value === "done" ? "Gi\u00e0 fatto" : "Da fare";
 
     }
 
@@ -247,9 +269,10 @@
 
         els.eventList.innerHTML =
             events.map(event => `
-                <button class="eventRow ${event.token === selectedToken ? "selected" : ""}" type="button" data-token="${event.token}">
+                <button class="eventRow ${event.weddingWorkflowStatus === "done" ? "isDone" : ""} ${event.token === selectedToken ? "selected" : ""}" type="button" data-token="${event.token}">
                     <span>${escapeHtml(event.title)}</span>
                     <strong>${escapeHtml(event.status || "bozza")}</strong>
+                    <em>${escapeHtml(workflowLabel(event.weddingWorkflowStatus))}</em>
                     <small>${escapeHtml([event.weddingDate, event.venue].filter(Boolean).join(" - ") || "Senza data")}</small>
                 </button>
             `).join("");
@@ -290,6 +313,8 @@
             event.title || "";
         els.editStatus.value =
             event.status || "bozza";
+        els.editWeddingWorkflowStatus.value =
+            event.weddingWorkflowStatus === "done" ? "done" : "todo";
         els.editGroom.value =
             event.groomName || "";
         els.editBride.value =
@@ -371,6 +396,7 @@
                 body: JSON.stringify({
                     title: els.editTitle.value,
                     status: els.editStatus.value,
+                    weddingWorkflowStatus: els.editWeddingWorkflowStatus.value,
                     groomName: els.editGroom.value,
                     brideName: els.editBride.value,
                     weddingDate: els.editDate.value,

@@ -365,6 +365,8 @@ function normalizeEvent(event) {
             800
         ),
         status: cleanText(source.status, "bozza", 40),
+        weddingWorkflowStatus:
+            source.weddingWorkflowStatus === "done" ? "done" : "todo",
         adminCeremonyNotes: cleanLongText(source.adminCeremonyNotes, "", 1600),
         adminInternalNotes: cleanLongText(
             source.adminInternalNotes || source.adminCeremonyNotes,
@@ -1028,6 +1030,8 @@ function installWeddingPlanner(app) {
         event.introMessage =
             cleanLongText(body.introMessage, event.introMessage, 800);
         event.status = cleanText(body.status, event.status, 40);
+        event.weddingWorkflowStatus =
+            body.weddingWorkflowStatus === "done" ? "done" : "todo";
         event.adminCeremonyNotes =
             cleanLongText(body.adminCeremonyNotes, event.adminCeremonyNotes, 1600);
         event.adminInternalNotes =

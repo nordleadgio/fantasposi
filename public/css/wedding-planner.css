@@ -404,7 +404,7 @@ h2 {
 
 .eventRow {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     gap: 4px 14px;
     padding: 14px;
     text-align: left;
@@ -418,12 +418,22 @@ h2 {
     outline: 3px solid rgba(184, 138, 68, 0.35);
 }
 
+.eventRow.isDone {
+    opacity: 0.72;
+    background:
+        linear-gradient(135deg, rgba(246, 241, 236, 0.72), rgba(255, 255, 255, 0.62));
+}
+
 .eventRow::before {
     content: "";
     position: absolute;
     inset: 0 auto 0 0;
     width: 5px;
     background: linear-gradient(var(--wine), var(--gold), var(--sage));
+}
+
+.eventRow.isDone::before {
+    background: linear-gradient(#7a7a80, #b7afa7);
 }
 
 .eventRow span {
@@ -438,6 +448,23 @@ h2 {
 
 .eventRow small {
     grid-column: 1 / -1;
+    color: var(--muted);
+}
+
+.eventRow em {
+    justify-self: end;
+    border-radius: 999px;
+    padding: 4px 9px;
+    background: rgba(111, 128, 104, 0.14);
+    color: var(--sage);
+    font-size: 0.72rem;
+    font-style: normal;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.eventRow.isDone em {
+    background: rgba(112, 112, 118, 0.16);
     color: var(--muted);
 }
 
