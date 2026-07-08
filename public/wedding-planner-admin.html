@@ -89,57 +89,70 @@
                     <img class="qrImage" id="detailQr" alt="QR scheda musicale">
                 </div>
 
-                <div class="copyLine">
-                    <input id="detailUrl" type="text" readonly>
-                    <button class="secondaryButton" id="copyLink" type="button">Copia link</button>
-                </div>
+                <nav class="adminTabs" aria-label="Sezioni scheda">
+                    <button class="adminTab active" type="button" data-admin-tab="info">Info</button>
+                    <button class="adminTab" type="button" data-admin-tab="summaries">Riepiloghi</button>
+                    <button class="adminTab" type="button" data-admin-tab="rite">Rito religioso</button>
+                </nav>
 
-                <div class="detailActions">
-                    <button class="primaryButton" id="openPlanner" type="button">Modifica scheda completa</button>
-                    <button class="secondaryButton" id="printEvent" type="button">Apri PDF</button>
-                    <button class="dangerButton" id="deleteEvent" type="button">Elimina scheda</button>
-                </div>
+                <section class="adminTabPanel active" data-admin-panel="info">
+                    <div class="copyLine">
+                        <input id="detailUrl" type="text" readonly>
+                        <button class="secondaryButton" id="copyLink" type="button">Copia link</button>
+                    </div>
 
-                <div class="editGrid">
-                    <label>Titolo
-                        <input id="editTitle" type="text">
-                    </label>
-                    <label>Stato
-                        <select id="editStatus">
-                            <option value="bozza">Bozza</option>
-                            <option value="inviata">Inviata</option>
-                            <option value="in compilazione">In compilazione</option>
-                            <option value="compilata">Compilata</option>
-                            <option value="revisionata">Revisionata</option>
-                        </select>
-                    </label>
-                    <label>Stato matrimonio
-                        <select id="editWeddingWorkflowStatus">
-                            <option value="todo">Da fare</option>
-                            <option value="done">Gi&agrave; fatto</option>
-                        </select>
-                    </label>
-                    <label>Nome sposo
-                        <input id="editGroom" type="text">
-                    </label>
-                    <label>Nome sposa
-                        <input id="editBride" type="text">
-                    </label>
-                    <label>Data
-                        <input id="editDate" type="date">
-                    </label>
-                    <label>Location
-                        <input id="editVenue" type="text">
-                    </label>
-                    <label class="wide">Messaggio iniziale
-                        <textarea id="editIntro"></textarea>
-                    </label>
-                    <label class="wide adminPrivateNotes">Note interne admin
-                        <span>Private, visibili solo da questo pannello.</span>
-                        <textarea id="editAdminInternalNotes" placeholder="Appunti per telefonate, accordi, cose da ricordare o richieste da gestire noi."></textarea>
-                    </label>
-                </div>
-                <section class="religiousProgramPanel hidden" id="religiousProgramPanel">
+                    <div class="detailActions">
+                        <button class="primaryButton" id="openPlanner" type="button">Modifica scheda completa</button>
+                        <button class="secondaryButton" id="printEvent" type="button">Apri PDF scheda</button>
+                        <button class="secondaryButton" id="printRiteEvent" type="button">Apri PDF rito</button>
+                        <button class="dangerButton" id="deleteEvent" type="button">Elimina scheda</button>
+                    </div>
+
+                    <div class="editGrid">
+                        <label>Titolo
+                            <input id="editTitle" type="text">
+                        </label>
+                        <label>Stato
+                            <select id="editStatus">
+                                <option value="bozza">Bozza</option>
+                                <option value="inviata">Inviata</option>
+                                <option value="in compilazione">In compilazione</option>
+                                <option value="compilata">Compilata</option>
+                                <option value="revisionata">Revisionata</option>
+                            </select>
+                        </label>
+                        <label>Stato matrimonio
+                            <select id="editWeddingWorkflowStatus">
+                                <option value="todo">Da fare</option>
+                                <option value="done">Gi&agrave; fatto</option>
+                            </select>
+                        </label>
+                        <label>Nome sposo
+                            <input id="editGroom" type="text">
+                        </label>
+                        <label>Nome sposa
+                            <input id="editBride" type="text">
+                        </label>
+                        <label>Data
+                            <input id="editDate" type="date">
+                        </label>
+                        <label>Location
+                            <input id="editVenue" type="text">
+                        </label>
+                        <label class="wide">Messaggio iniziale
+                            <textarea id="editIntro"></textarea>
+                        </label>
+                        <label class="wide adminPrivateNotes">Note interne admin
+                            <span>Private, visibili solo da questo pannello.</span>
+                            <textarea id="editAdminInternalNotes" placeholder="Appunti per telefonate, accordi, cose da ricordare o richieste da gestire noi."></textarea>
+                        </label>
+                    </div>
+                    <button class="primaryButton" id="saveEvent" type="button">Salva modifiche admin</button>
+                    <p class="formMessage adminSaveMessage" id="adminSaveMessage"></p>
+                </section>
+
+                <section class="adminTabPanel" data-admin-panel="rite">
+                    <section class="religiousProgramPanel hidden" id="religiousProgramPanel">
                     <div class="panelHeader">
                         <h2>Programmazione rito religioso</h2>
                         <p>Seleziona i brani del rito. Gli sposi li vedranno solo dopo la conferma.</p>
@@ -147,22 +160,22 @@
                     <div id="religiousProgramFields"></div>
                     <button class="primaryButton" id="confirmReligiousProgram" type="button">Conferma rito</button>
                     <p class="formMessage adminSaveMessage" id="religiousProgramMessage"></p>
+                    </section>
                 </section>
-                <button class="primaryButton" id="saveEvent" type="button">Salva modifiche admin</button>
-                <p class="formMessage adminSaveMessage" id="adminSaveMessage"></p>
 
-                <section class="answersView">
+                <section class="answersView adminTabPanel" data-admin-panel="summaries">
                     <div class="panelHeader">
-                        <h2>Compilazione ricevuta</h2>
-                        <p>Riepilogo ordinato per telefonata, revisione o scaletta finale.</p>
+                        <h2>Riepiloghi</h2>
+                        <p>Rito e resto della scheda sono separati per lettura e PDF.</p>
                     </div>
-                    <div id="answersSummary"></div>
+                    <div id="riteSummary"></div>
+                    <div id="mainSummary"></div>
                 </section>
             </article>
         </section>
     </section>
 </main>
 
-<script src="/js/wedding-planner-admin.js?v=20260708-religious-exit-other"></script>
+<script src="/js/wedding-planner-admin.js?v=20260708-admin-tabs-meal-pdfs"></script>
 </body>
 </html>

@@ -153,6 +153,7 @@
         copyLink: $("copyLink"),
         openPlanner: $("openPlanner"),
         printEvent: $("printEvent"),
+        printRiteEvent: $("printRiteEvent"),
         deleteEvent: $("deleteEvent"),
         editTitle: $("editTitle"),
         editStatus: $("editStatus"),
@@ -169,7 +170,8 @@
         religiousProgramMessage: $("religiousProgramMessage"),
         saveEvent: $("saveEvent"),
         adminSaveMessage: $("adminSaveMessage"),
-        answersSummary: $("answersSummary")
+        riteSummary: $("riteSummary"),
+        mainSummary: $("mainSummary")
     };
 
     els.loginForm.addEventListener("submit", login);
@@ -179,9 +181,14 @@
     els.copyLink.addEventListener("click", copyLink);
     els.openPlanner.addEventListener("click", openPlanner);
     els.printEvent.addEventListener("click", printSelected);
+    els.printRiteEvent.addEventListener("click", printRiteSelected);
     els.deleteEvent.addEventListener("click", deleteSelected);
     els.confirmReligiousProgram.addEventListener("click", confirmReligiousProgram);
     els.saveEvent.addEventListener("click", saveSelected);
+
+    document.querySelectorAll("[data-admin-tab]").forEach(button => {
+        button.addEventListener("click", () => selectAdminTab(button.dataset.adminTab));
+    });
 
     setUnlocked(Boolean(adminPassword()));
 
@@ -259,6 +266,18 @@
 
         sessionStorage.removeItem(SESSION_KEY);
         setUnlocked(false);
+
+    }
+
+    function selectAdminTab(tab) {
+
+        document.querySelectorAll("[data-admin-tab]").forEach(button => {
+            button.classList.toggle("active", button.dataset.adminTab === tab);
+        });
+
+        document.querySelectorAll("[data-admin-panel]").forEach(panel => {
+            panel.classList.toggle("active", panel.dataset.adminPanel === tab);
+        });
 
     }
 
@@ -504,8 +523,10 @@
             event.introMessage || "";
         els.editAdminInternalNotes.value =
             event.adminInternalNotes || event.adminCeremonyNotes || "";
-        els.answersSummary.innerHTML =
-            buildSummary(event);
+        els.riteSummary.innerHTML =
+            buildRiteSummary(event);
+        els.mainSummary.innerHTML =
+            buildMainSummary(event);
         clearAdminSaveMessage();
         clearReligiousProgramMessage();
         renderReligiousProgram(event);
@@ -777,6 +798,18 @@
 
     function printSelected() {
 
+        printPdf("pdf", "scheda-sposi");
+
+    }
+
+    function printRiteSelected() {
+
+        printPdf("rite-pdf", "rito");
+
+    }
+
+    function printPdf(kind, suffix) {
+
         const event =
             events.find(item => item.token === selectedToken);
 
@@ -792,7 +825,7 @@
         }
 
         fetch(
-            `/api/wedding-planner/events/${encodeURIComponent(selectedToken)}/pdf`,
+            `/api/wedding-planner/events/${encodeURIComponent(selectedToken)}/${kind}`,
             {
                 headers: {
                     "x-fantasposi-admin-password": adminPassword()
@@ -819,7 +852,7 @@
 
                     link.href = url;
                     link.download =
-                        `${slugify(event.title || "scheda-sposi")}.pdf`;
+                        `${slugify(event.title || "scheda-sposi")}-${suffix}.pdf`;
                     link.click();
                 }
 
@@ -919,12 +952,10 @@
 
     }
 
-    function buildSummary(eventOrAnswers) {
+    function baseSummaryData(eventOrAnswers) {
 
         const data =
             eventOrAnswers.answers ? eventOrAnswers.answers : eventOrAnswers;
-        const adminInternalNotes =
-            eventOrAnswers.adminInternalNotes || eventOrAnswers.adminCeremonyNotes || "";
         const religiousProgram =
             eventOrAnswers.religiousProgram && eventOrAnswers.religiousProgram.confirmed ?
                 eventOrAnswers.religiousProgram :
@@ -945,24 +976,24 @@
                 ] :
                 [];
 
-        const couple =
-            data.couple || {};
+        return {
+            data,
+            religiousRows,
+            adminInternalNotes:
+                eventOrAnswers.adminInternalNotes || eventOrAnswers.adminCeremonyNotes || ""
+        };
+
+    }
+
+    function buildRiteSummary(eventOrAnswers) {
+
+        const { data, religiousRows } =
+            baseSummaryData(eventOrAnswers);
         const ceremony =
             data.ceremony || {};
-        const reception =
-            data.reception || {};
-        const special =
-            data.specialMoments || {};
 
         return [
-            section("Sposi", [
-                couple.groomFullName && `Sposo: ${couple.groomFullName}`,
-                couple.brideFullName && `Sposa: ${couple.brideFullName}`,
-                couple.groomAge && `Eta sposo: ${couple.groomAge}`,
-                couple.brideAge && `Eta sposa: ${couple.brideAge}`,
-                couple.hasChildren && `Figli: ${couple.childrenNames || "si"}`
-            ]),
-            section("Rito", [
+            section("Riepilogo rito", [
                 ceremony.type === "civil" ? "Rito civile" : "",
                 ceremony.type === "religious" ? "Rito religioso" : "",
                 ceremony.type === "noRite" ? "Rito non richiesto" : "",
@@ -999,8 +1030,33 @@
                 ])),
                 ceremony.civilNotes && textLine("Altre richieste rito civile", ceremony.civilNotes),
                 ceremony.religiousNotes && textLine("Note rito", ceremony.religiousNotes)
+            ])
+        ].join("") || "<div class=\"emptyState\">Nessuna informazione rito compilata.</div>";
+
+    }
+
+    function buildMainSummary(eventOrAnswers) {
+
+        const { data, adminInternalNotes } =
+            baseSummaryData(eventOrAnswers);
+        const couple =
+            data.couple || {};
+        const reception =
+            data.reception || {};
+        const special =
+            data.specialMoments || {};
+
+        return [
+            section("Sposi", [
+                couple.groomFullName && `Sposo: ${couple.groomFullName}`,
+                couple.brideFullName && `Sposa: ${couple.brideFullName}`,
+                couple.groomAge && `Eta sposo: ${couple.groomAge}`,
+                couple.brideAge && `Eta sposa: ${couple.brideAge}`,
+                couple.hasChildren && `Figli: ${couple.childrenNames || "si"}`
             ]),
-            section("Best Moments", [
+            section("Riepilogo festa e location", [
+                reception.mealType && `Servizio: ${reception.mealType}`,
+                reception.guestCount && `Invitati: ${reception.guestCount}`,
                 song("Arrivo location", reception.arrivalSong),
                 ...((reception.arrivalExtraSongs || []).map((item, index) =>
                     song(`Arrivo location - brano aggiuntivo ${index + 1}`, item)
@@ -1032,7 +1088,7 @@
             section("Note interne admin", [
                 adminInternalNotes && textLine("Note private", adminInternalNotes)
             ])
-        ].join("") || "<div class=\"emptyState\">Gli sposi non hanno ancora compilato la scheda.</div>";
+        ].join("") || "<div class=\"emptyState\">Gli sposi non hanno ancora compilato il resto della scheda.</div>";
 
     }
 

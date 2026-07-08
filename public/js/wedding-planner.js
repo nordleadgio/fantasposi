@@ -138,6 +138,8 @@
                 religiousNotes: ""
             },
             reception: {
+                mealType: "",
+                guestCount: "",
                 arrivalExtraSongs: [],
                 entranceExtraSongs: [],
                 firstDanceExtraSongs: [],
@@ -1120,15 +1122,8 @@
                 ] :
                 [];
 
-        return `
-            ${summarySection("Sposi", [
-                data.couple.groomFullName,
-                data.couple.brideFullName,
-                data.couple.groomAge && `Eta sposo: ${data.couple.groomAge}`,
-                data.couple.brideAge && `Eta sposa: ${data.couple.brideAge}`,
-                data.couple.hasChildren && `Figli: ${data.couple.childrenNames || "si"}`
-            ])}
-            ${summarySection("Rito", [
+        const riteSummary =
+            summarySection("Riepilogo rito", [
                 ceremonyType,
                 data.ceremony.startTime && `Orario inizio rito: ${data.ceremony.startTime}`,
                 data.ceremony.type === "religious" && data.ceremony.churchName && `Chiesa: ${data.ceremony.churchName}`,
@@ -1163,8 +1158,19 @@
                 ]),
                 data.ceremony.civilNotes && textLine("Altre richieste rito civile", data.ceremony.civilNotes),
                 data.ceremony.religiousNotes && textLine("Note rito", data.ceremony.religiousNotes)
+            ]);
+
+        const mainSummary = `
+            ${summarySection("Sposi", [
+                data.couple.groomFullName,
+                data.couple.brideFullName,
+                data.couple.groomAge && `Eta sposo: ${data.couple.groomAge}`,
+                data.couple.brideAge && `Eta sposa: ${data.couple.brideAge}`,
+                data.couple.hasChildren && `Figli: ${data.couple.childrenNames || "si"}`
             ])}
-            ${summarySection("Best Moments", [
+            ${summarySection("Riepilogo festa e location", [
+                data.reception.mealType && `Servizio: ${data.reception.mealType}`,
+                data.reception.guestCount && `Invitati: ${data.reception.guestCount}`,
                 songLine("Arrivo location", data.reception.arrivalSong),
                 ...(data.reception.arrivalExtraSongs || []).map((song, index) =>
                     songLine(`Arrivo location - brano aggiuntivo ${index + 1}`, song)
@@ -1194,6 +1200,8 @@
                 data.specialMoments.otherRequests && textLine("Altre richieste", data.specialMoments.otherRequests)
             ])}
         `;
+
+        return `${riteSummary}${mainSummary}`;
 
     }
 

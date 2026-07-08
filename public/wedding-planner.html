@@ -188,6 +188,22 @@
             </section>
 
             <section class="formStep" data-step="2">
+                <div class="infoPanel">
+                    <h3>Servizio</h3>
+                    <div class="choiceGrid compactChoiceGrid">
+                        <label class="choiceCard">
+                            <input data-field="reception.mealType" type="radio" value="pranzo" name="mealType">
+                            <span>Pranzo</span>
+                        </label>
+                        <label class="choiceCard">
+                            <input data-field="reception.mealType" type="radio" value="cena" name="mealType">
+                            <span>Cena</span>
+                        </label>
+                    </div>
+                    <label>Numero invitati
+                        <input data-field="reception.guestCount" type="text" inputmode="numeric" placeholder="Es. circa 120 oppure 96 confermati">
+                    </label>
+                </div>
                 <div class="songBlock">
                     <div class="songBlockHeader">
                         <h3>Arrivo sposi alla location</h3>
@@ -287,6 +303,6 @@
     </section>
 </main>
 
-<script src="/js/wedding-planner.js?v=20260708-religious-program"></script>
+<script src="/js/wedding-planner.js?v=20260708-admin-tabs-meal-pdfs"></script>
 </body>
 </html>

@@ -366,6 +366,8 @@ function createEmptyAnswers() {
             religiousNotes: ""
         },
         reception: {
+            mealType: "",
+            guestCount: "",
             arrivalSong: cleanSong({}),
             entranceSong: cleanSong({}),
             firstDanceSong: cleanSong({}),
@@ -521,6 +523,10 @@ function cleanAnswers(value) {
     };
 
     current.reception = {
+        mealType: ["pranzo", "cena"].includes(reception.mealType) ?
+            reception.mealType :
+            "",
+        guestCount: cleanText(reception.guestCount, "", 40),
         arrivalSong: cleanSong(reception.arrivalSong),
         entranceSong: cleanSong(reception.entranceSong),
         firstDanceSong: cleanSong(reception.firstDanceSong),
@@ -687,29 +693,14 @@ function songLabel(label, song) {
 
 }
 
-function summaryLines(event) {
+function riteSummarySections(event) {
 
     const answers =
         event.answers || createEmptyAnswers();
-    const couple =
-        answers.couple || {};
     const ceremony =
         answers.ceremony || {};
-    const reception =
-        answers.reception || {};
-    const special =
-        answers.specialMoments || {};
-    const sections = [
-        {
-            title: "Sposi",
-            rows: [
-                couple.groomFullName && `Sposo: ${couple.groomFullName}`,
-                couple.brideFullName && `Sposa: ${couple.brideFullName}`,
-                couple.groomAge && `Eta sposo: ${couple.groomAge}`,
-                couple.brideAge && `Eta sposa: ${couple.brideAge}`,
-                couple.hasChildren && `Figli: ${couple.childrenNames || "si"}`
-            ]
-        },
+
+    return cleanSummarySections([
         {
             title: "Rito",
             rows: [
@@ -753,10 +744,38 @@ function summaryLines(event) {
                 ceremony.civilNotes && `Altre richieste rito civile: ${ceremony.civilNotes}`,
                 ceremony.religiousNotes && `Note rito: ${ceremony.religiousNotes}`
             ]
+        }
+    ]);
+
+}
+
+function mainSummarySections(event) {
+
+    const answers =
+        event.answers || createEmptyAnswers();
+    const couple =
+        answers.couple || {};
+    const reception =
+        answers.reception || {};
+    const special =
+        answers.specialMoments || {};
+
+    return cleanSummarySections([
+        {
+            title: "Sposi",
+            rows: [
+                couple.groomFullName && `Sposo: ${couple.groomFullName}`,
+                couple.brideFullName && `Sposa: ${couple.brideFullName}`,
+                couple.groomAge && `Eta sposo: ${couple.groomAge}`,
+                couple.brideAge && `Eta sposa: ${couple.brideAge}`,
+                couple.hasChildren && `Figli: ${couple.childrenNames || "si"}`
+            ]
         },
         {
             title: "Best Moments",
             rows: [
+                reception.mealType && `Servizio: ${reception.mealType}`,
+                reception.guestCount && `Invitati: ${reception.guestCount}`,
                 songLabel("Arrivo location", reception.arrivalSong),
                 ...((reception.arrivalExtraSongs || []).map((song, index) =>
                     songLabel(`Arrivo location - brano aggiuntivo ${index + 1}`, song)
@@ -796,7 +815,28 @@ function summaryLines(event) {
                     `Note private: ${event.adminInternalNotes || event.adminCeremonyNotes}`
             ]
         }
+    ]);
+
+}
+
+function summaryLines(event, kind = "all") {
+
+    if (kind === "rite") {
+        return riteSummarySections(event);
+    }
+
+    if (kind === "main") {
+        return mainSummarySections(event);
+    }
+
+    return [
+        ...mainSummarySections(event),
+        ...riteSummarySections(event)
     ];
+
+}
+
+function cleanSummarySections(sections) {
 
     return sections
         .map(section => ({
@@ -847,7 +887,7 @@ function wrapPdfText(text, maxChars) {
 
 }
 
-function createPdfBuffer(event) {
+function createPdfBuffer(event, kind = "main") {
 
     const pageWidth = 595;
     const pageHeight = 842;
@@ -880,7 +920,14 @@ function createPdfBuffer(event) {
         y -= size + 6;
     }
 
-    textLine(event.title || "Scheda sposi", margin, titleSize, "F2");
+    textLine(
+        kind === "rite" ?
+            `Rito - ${event.title || "Scheda sposi"}` :
+            event.title || "Scheda sposi",
+        margin,
+        titleSize,
+        "F2"
+    );
 
     [
         event.weddingDate && `Data: ${event.weddingDate}`,
@@ -892,7 +939,10 @@ function createPdfBuffer(event) {
 
     y -= 10;
 
-    summaryLines(event).forEach(section => {
+    const sections =
+        summaryLines(event, kind);
+
+    sections.forEach(section => {
         ensureSpace(headingSize + 30);
         textLine(section.title, margin, headingSize, "F2");
 
@@ -906,7 +956,7 @@ function createPdfBuffer(event) {
         y -= 8;
     });
 
-    if (!summaryLines(event).length) {
+    if (!sections.length) {
         textLine("Gli sposi non hanno ancora compilato la scheda.", margin, normalSize, "F1");
     }
 
@@ -1392,7 +1442,32 @@ function installWeddingPlanner(app) {
 
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-        res.send(createPdfBuffer(event));
+        res.send(createPdfBuffer(event, "main"));
+
+    });
+
+    app.get("/api/wedding-planner/events/:token/rite-pdf", requireAdmin, async (req, res) => {
+
+        await storageReady;
+
+        const event =
+            await storage.findEvent(req.params.token);
+
+        if (!event) {
+            return res.status(404).json({
+                error: "Scheda non trovata"
+            });
+        }
+
+        const fileName =
+            `${(event.title || "scheda-sposi")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "") || "scheda-sposi"}-rito.pdf`;
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+        res.send(createPdfBuffer(event, "rite"));
 
     });
 

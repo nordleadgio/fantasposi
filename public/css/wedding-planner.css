@@ -547,6 +547,36 @@ h2 {
     padding: 18px;
 }
 
+.adminTabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.adminTab {
+    border: 1px solid rgba(184, 138, 68, 0.28);
+    border-radius: 999px;
+    padding: 9px 13px;
+    background: rgba(255, 253, 249, 0.72);
+    color: var(--muted);
+    font-size: 0.82rem;
+    font-weight: 900;
+}
+
+.adminTab.active {
+    background: var(--wine);
+    color: white;
+}
+
+.adminTabPanel {
+    display: none;
+}
+
+.adminTabPanel.active {
+    display: block;
+}
+
 .statusPill {
     display: inline-flex;
     min-height: 28px;
@@ -817,6 +847,11 @@ h2 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
+}
+
+.compactChoiceGrid {
+    grid-template-columns: repeat(2, minmax(0, 180px));
+    margin-bottom: 12px;
 }
 
 .choiceCard {
