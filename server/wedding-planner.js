@@ -132,7 +132,8 @@ const RELIGIOUS_PROGRAM_MOMENTS = [
         key: "exit",
         title: "Uscita sposi",
         options: [
-            "Accompagnamento strumentale"
+            "Accompagnamento musicale",
+            "Altro"
         ]
     }
 ];
@@ -424,7 +425,9 @@ function cleanReligiousProgram(value) {
             const selectedSource =
                 safeObject(sourceByKey.get(moment.key));
             const selected =
-                cleanText(selectedSource.selected, "", 220);
+                normalizeReligiousProgramSelection(
+                    cleanText(selectedSource.selected, "", 220)
+                );
             const validSelected =
                 moment.options.includes(selected) ? selected : "";
 
@@ -437,6 +440,16 @@ function cleanReligiousProgram(value) {
         }),
         confirmedAt: cleanText(source.confirmedAt, "", 80)
     };
+
+}
+
+function normalizeReligiousProgramSelection(value) {
+
+    if (value === "Accompagnamento strumentale") {
+        return "Accompagnamento musicale";
+    }
+
+    return value;
 
 }
 

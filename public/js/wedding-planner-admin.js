@@ -121,7 +121,8 @@
             key: "exit",
             title: "Uscita sposi",
             options: [
-                "Accompagnamento strumentale"
+                "Accompagnamento musicale",
+                "Altro"
             ]
         }
     ];
