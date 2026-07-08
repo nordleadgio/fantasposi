@@ -8,6 +8,124 @@
     let events = [];
     let selectedToken = "";
 
+    const religiousProgramMoments = [
+        {
+            key: "groomEntrance",
+            title: "Entrata sposo",
+            options: [
+                "Canone in D di Pachelbel",
+                "Marcia di Elgar (Pomp and Circumstance N.1 Theme)",
+                "Rivers flow in you (Yiruma)",
+                "Altro"
+            ]
+        },
+        {
+            key: "brideEntrance",
+            title: "Entrata sposa",
+            options: [
+                "Canone in D di Pachelbel",
+                "Marcia nuziale di F. Mendelssohn",
+                "Marcia nuziale di Wagner",
+                "Figlia di Sion",
+                "Altro"
+            ]
+        },
+        {
+            key: "gloriaAspersion",
+            title: "Gloria e aspersione",
+            options: [
+                "Gloria Giombini",
+                "Gloria in excelsis deo"
+            ]
+        },
+        {
+            key: "gospel",
+            title: "Canto al Vangelo",
+            options: [
+                "Alleluia, la nostra festa (Alleluia delle lampadine)",
+                "Alleluia, canto per Cristo",
+                "Alleluia, passeranno i cieli"
+            ]
+        },
+        {
+            key: "offertory",
+            title: "Offertorio",
+            options: [
+                "Ecco quel che abbiamo",
+                "Vivere la vita",
+                "Servo per amore"
+            ]
+        },
+        {
+            key: "holy",
+            title: "Santo",
+            options: [
+                "Santo Zaire, Osanna eh",
+                "Santo di Bonfitto",
+                "Santo Gen Rosso, Santo Santo Santo"
+            ]
+        },
+        {
+            key: "ourFather",
+            title: "Padre Nostro",
+            options: [
+                "Padre nostro sulle note di The sound of silence",
+                "Padre nostro Giombini",
+                "Padre nostro classico"
+            ]
+        },
+        {
+            key: "peace",
+            title: "Segno della pace",
+            options: [
+                "Pace nel signore, Pace a te pace a te",
+                "Pace sia pace a voi"
+            ]
+        },
+        {
+            key: "lambOfGod",
+            title: "Agnello di Dio",
+            options: [
+                "Agnello di Dio"
+            ]
+        },
+        {
+            key: "communion",
+            title: "Canto di comunione",
+            options: [
+                "Dolce e sentire, fratello sole",
+                "Te al centro del mio cuore",
+                "Pane del cielo",
+                "Su ali d'aquila",
+                "Tu sei"
+            ]
+        },
+        {
+            key: "signatures",
+            title: "Canto sulle firme",
+            options: [
+                "Ave Maria di Schubert",
+                "Altro"
+            ]
+        },
+        {
+            key: "preCivilClosing",
+            title: "Canto di fine celebrazione pre rito civile se richiesto dal sacerdote",
+            options: [
+                "Resta qui con noi",
+                "Laudato sii",
+                "Figlia di Sion"
+            ]
+        },
+        {
+            key: "exit",
+            title: "Uscita sposi",
+            options: [
+                "Accompagnamento strumentale"
+            ]
+        }
+    ];
+
     const els = {
         loginGate: $("loginGate"),
         loginForm: $("loginForm"),
@@ -44,6 +162,10 @@
         editVenue: $("editVenue"),
         editIntro: $("editIntro"),
         editAdminInternalNotes: $("editAdminInternalNotes"),
+        religiousProgramPanel: $("religiousProgramPanel"),
+        religiousProgramFields: $("religiousProgramFields"),
+        confirmReligiousProgram: $("confirmReligiousProgram"),
+        religiousProgramMessage: $("religiousProgramMessage"),
         saveEvent: $("saveEvent"),
         adminSaveMessage: $("adminSaveMessage"),
         answersSummary: $("answersSummary")
@@ -57,6 +179,7 @@
     els.openPlanner.addEventListener("click", openPlanner);
     els.printEvent.addEventListener("click", printSelected);
     els.deleteEvent.addEventListener("click", deleteSelected);
+    els.confirmReligiousProgram.addEventListener("click", confirmReligiousProgram);
     els.saveEvent.addEventListener("click", saveSelected);
 
     setUnlocked(Boolean(adminPassword()));
@@ -383,8 +506,173 @@
         els.answersSummary.innerHTML =
             buildSummary(event);
         clearAdminSaveMessage();
+        clearReligiousProgramMessage();
+        renderReligiousProgram(event);
         renderEvents();
         loadQr(event.token);
+
+    }
+
+    function createReligiousProgram(source) {
+
+        const program =
+            source && source.moments ? source : {};
+        const momentsByKey =
+            new Map(
+                (program.moments || []).map(moment => [moment.key, moment])
+            );
+
+        return {
+            confirmed: Boolean(program.confirmed),
+            confirmedAt: program.confirmedAt || "",
+            moments: religiousProgramMoments.map(moment => {
+                const saved =
+                    momentsByKey.get(moment.key) || {};
+
+                return {
+                    key: moment.key,
+                    title: moment.title,
+                    selected: moment.options.includes(saved.selected) ? saved.selected : "",
+                    otherText: saved.otherText || ""
+                };
+            })
+        };
+
+    }
+
+    function renderReligiousProgram(event) {
+
+        const isReligious =
+            event.answers &&
+            event.answers.ceremony &&
+            event.answers.ceremony.type === "religious";
+
+        els.religiousProgramPanel.classList.toggle("hidden", !isReligious);
+
+        if (!isReligious) {
+            els.religiousProgramFields.innerHTML = "";
+            return;
+        }
+
+        const program =
+            createReligiousProgram(event.religiousProgram);
+
+        els.religiousProgramFields.innerHTML =
+            religiousProgramMoments.map(moment => {
+                const saved =
+                    program.moments.find(item => item.key === moment.key) || {};
+                const selected =
+                    saved.selected || "";
+
+                return `
+                    <article class="religiousProgramMoment" data-religious-moment="${escapeAttr(moment.key)}">
+                        <h3>${escapeHtml(moment.title)}</h3>
+                        <div class="religiousOptions">
+                            ${moment.options.map(option => `
+                                <label class="radioLine">
+                                    <input type="radio" name="religious-${escapeAttr(moment.key)}" value="${escapeAttr(option)}" ${selected === option ? "checked" : ""}>
+                                    <span>${escapeHtml(option)}</span>
+                                </label>
+                            `).join("")}
+                        </div>
+                        <label class="religiousOther ${selected === "Altro" ? "" : "hidden"}">Brano alternativo
+                            <input type="text" value="${escapeAttr(saved.otherText || "")}" data-religious-other="${escapeAttr(moment.key)}" placeholder="Scrivi titolo e autore">
+                        </label>
+                    </article>
+                `;
+            }).join("");
+
+        els.religiousProgramFields.querySelectorAll("input[type='radio']").forEach(input => {
+            input.addEventListener("change", () => {
+                const container =
+                    input.closest("[data-religious-moment]");
+                const other =
+                    container && container.querySelector(".religiousOther");
+
+                if (other) {
+                    other.classList.toggle("hidden", input.value !== "Altro");
+                }
+            });
+        });
+
+    }
+
+    function collectReligiousProgram() {
+
+        return {
+            confirmed: true,
+            confirmedAt: new Date().toISOString(),
+            moments: religiousProgramMoments.map(moment => {
+                const checked =
+                    els.religiousProgramFields.querySelector(
+                        `[data-religious-moment="${cssEscape(moment.key)}"] input[type="radio"]:checked`
+                    );
+                const other =
+                    els.religiousProgramFields.querySelector(
+                        `[data-religious-other="${cssEscape(moment.key)}"]`
+                    );
+
+                return {
+                    key: moment.key,
+                    title: moment.title,
+                    selected: checked ? checked.value : "",
+                    otherText: other ? other.value : ""
+                };
+            })
+        };
+
+    }
+
+    function confirmReligiousProgram() {
+
+        const event =
+            events.find(item => item.token === selectedToken);
+
+        if (!event) {
+            return;
+        }
+
+        const religiousProgram =
+            collectReligiousProgram();
+
+        showReligiousProgramMessage("Conferma rito in corso...", "loading");
+        els.confirmReligiousProgram.disabled =
+            true;
+
+        fetch(
+            `/api/wedding-planner/events/${encodeURIComponent(selectedToken)}`,
+            {
+                method: "PUT",
+                headers: headers(),
+                body: JSON.stringify({
+                    religiousProgram
+                })
+            }
+        )
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Conferma rito non riuscita");
+                }
+                return response.json();
+            })
+            .then(updated => {
+                events =
+                    events.map(item =>
+                        item.token === updated.token ? updated : item
+                    );
+                selectEvent(updated.token);
+                showReligiousProgramMessage("Rito religioso confermato.", "success");
+            })
+            .catch(() => {
+                showReligiousProgramMessage(
+                    "Non sono riuscito a confermare il rito. Riprova.",
+                    "error"
+                );
+            })
+            .finally(() => {
+                els.confirmReligiousProgram.disabled =
+                    false;
+            });
 
     }
 
@@ -611,12 +899,50 @@
 
     }
 
+    function showReligiousProgramMessage(message, type) {
+
+        els.religiousProgramMessage.textContent =
+            message;
+        els.religiousProgramMessage.dataset.type =
+            type;
+        els.religiousProgramMessage.classList.add("isVisible");
+
+    }
+
+    function clearReligiousProgramMessage() {
+
+        els.religiousProgramMessage.textContent =
+            "";
+        els.religiousProgramMessage.removeAttribute("data-type");
+        els.religiousProgramMessage.classList.remove("isVisible");
+
+    }
+
     function buildSummary(eventOrAnswers) {
 
         const data =
             eventOrAnswers.answers ? eventOrAnswers.answers : eventOrAnswers;
         const adminInternalNotes =
             eventOrAnswers.adminInternalNotes || eventOrAnswers.adminCeremonyNotes || "";
+        const religiousProgram =
+            eventOrAnswers.religiousProgram && eventOrAnswers.religiousProgram.confirmed ?
+                eventOrAnswers.religiousProgram :
+                null;
+        const religiousRows =
+            religiousProgram ?
+                [
+                    "Programma rito religioso confermato",
+                    ...religiousProgram.moments
+                        .map(moment => {
+                            const selected =
+                                moment.selected === "Altro" ?
+                                    moment.otherText :
+                                    moment.selected;
+                            return selected && textLine(moment.title, selected);
+                        })
+                        .filter(Boolean)
+                ] :
+                [];
 
         const couple =
             data.couple || {};
@@ -638,9 +964,11 @@
             section("Rito", [
                 ceremony.type === "civil" ? "Rito civile" : "",
                 ceremony.type === "religious" ? "Rito religioso" : "",
+                ceremony.type === "noRite" ? "Rito non richiesto" : "",
                 ceremony.startTime && `Orario inizio rito: ${ceremony.startTime}`,
                 ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
                 ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
+                ...religiousRows,
                 song("Ingresso sposo", ceremony.groomEntranceSong),
                 ...((ceremony.groomEntranceExtraSongs || []).map((item, index) =>
                     song(`Ingresso sposo - brano aggiuntivo ${index + 1}`, item)
@@ -845,6 +1173,20 @@
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+
+    }
+
+    function escapeAttr(value) {
+
+        return escapeHtml(value);
+
+    }
+
+    function cssEscape(value) {
+
+        return String(value || "")
+            .replace(/\\/g, "\\\\")
+            .replace(/"/g, "\\\"");
 
     }
 

@@ -97,11 +97,20 @@
                         <input data-field="ceremony.type" type="radio" value="religious" name="ceremonyType">
                         <span>Rito religioso</span>
                     </label>
+                    <label class="choiceCard">
+                        <input data-field="ceremony.type" type="radio" value="noRite" name="ceremonyType">
+                        <span>Non abbiamo bisogno del rito</span>
+                    </label>
                 </div>
 
-                <label>Orario di inizio rito
+                <label class="conditional" data-hidden-value="ceremony.type:noRite">Orario di inizio rito
                     <input data-field="ceremony.startTime" type="time">
                 </label>
+
+                <div class="infoPanel conditional" data-visible-value="ceremony.type:noRite">
+                    <h3>Rito non richiesto</h3>
+                    <p>Salteremo la programmazione musicale del rito e passeremo direttamente ai momenti della location.</p>
+                </div>
 
                 <div class="conditional" data-visible-value="ceremony.type:civil">
                     <label class="toggleLine">
@@ -278,6 +287,6 @@
     </section>
 </main>
 
-<script src="/js/wedding-planner.js?v=20260708-summary-fix"></script>
+<script src="/js/wedding-planner.js?v=20260708-religious-program"></script>
 </body>
 </html>

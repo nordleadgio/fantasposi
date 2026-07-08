@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/wedding-planner.css?v=20260708-wedding-status-toggle">
+<link rel="stylesheet" href="/css/wedding-planner.css?v=20260708-religious-program">
 </head>
 <body class="plannerAdminBody">
 <section class="loginGate" id="loginGate">
@@ -139,6 +139,15 @@
                         <textarea id="editAdminInternalNotes" placeholder="Appunti per telefonate, accordi, cose da ricordare o richieste da gestire noi."></textarea>
                     </label>
                 </div>
+                <section class="religiousProgramPanel hidden" id="religiousProgramPanel">
+                    <div class="panelHeader">
+                        <h2>Programmazione rito religioso</h2>
+                        <p>Seleziona i brani del rito. Gli sposi li vedranno solo dopo la conferma.</p>
+                    </div>
+                    <div id="religiousProgramFields"></div>
+                    <button class="primaryButton" id="confirmReligiousProgram" type="button">Conferma rito</button>
+                    <p class="formMessage adminSaveMessage" id="religiousProgramMessage"></p>
+                </section>
                 <button class="primaryButton" id="saveEvent" type="button">Salva modifiche admin</button>
                 <p class="formMessage adminSaveMessage" id="adminSaveMessage"></p>
 
@@ -154,6 +163,6 @@
     </section>
 </main>
 
-<script src="/js/wedding-planner-admin.js?v=20260708-wedding-status-toggle"></script>
+<script src="/js/wedding-planner-admin.js?v=20260708-religious-program"></script>
 </body>
 </html>

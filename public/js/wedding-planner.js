@@ -134,7 +134,8 @@
                 ceremonyClosingExtraSongs: [],
                 ceremonyExitExtraSongs: [],
                 civilCustomMoments: [],
-                civilNotes: ""
+                civilNotes: "",
+                religiousNotes: ""
             },
             reception: {
                 arrivalExtraSongs: [],
@@ -489,6 +490,16 @@
             el.classList.toggle(
                 "hidden",
                 readField(field) !== expected
+            );
+        });
+
+        $$("[data-hidden-value]").forEach(el => {
+            const [field, expected] =
+                el.dataset.hiddenValue.split(":");
+
+            el.classList.toggle(
+                "hidden",
+                readField(field) === expected
             );
         });
 
@@ -1086,7 +1097,28 @@
                 "Rito civile" :
                 data.ceremony.type === "religious" ?
                     "Rito religioso" :
-                    "Non indicato";
+                    data.ceremony.type === "noRite" ?
+                        "Rito non richiesto" :
+                        "Non indicato";
+        const religiousProgram =
+            eventData && eventData.religiousProgram && eventData.religiousProgram.confirmed ?
+                eventData.religiousProgram :
+                null;
+        const religiousProgramRows =
+            religiousProgram ?
+                [
+                    "Programma rito religioso confermato",
+                    ...religiousProgram.moments
+                        .map(moment => {
+                            const selected =
+                                moment.selected === "Altro" ?
+                                    moment.otherText :
+                                    moment.selected;
+                            return selected && textLine(moment.title, selected);
+                        })
+                        .filter(Boolean)
+                ] :
+                [];
 
         return `
             ${summarySection("Sposi", [
@@ -1101,6 +1133,7 @@
                 data.ceremony.startTime && `Orario inizio rito: ${data.ceremony.startTime}`,
                 data.ceremony.type === "religious" && data.ceremony.churchName && `Chiesa: ${data.ceremony.churchName}`,
                 data.ceremony.type === "religious" && data.ceremony.churchTown && `Paese chiesa: ${data.ceremony.churchTown}`,
+                ...religiousProgramRows,
                 songLine("Ingresso sposo", data.ceremony.groomEntranceSong),
                 ...(data.ceremony.groomEntranceExtraSongs || []).map((song, index) =>
                     songLine(`Ingresso sposo - brano aggiuntivo ${index + 1}`, song)

@@ -97,6 +97,54 @@ label textarea {
     margin: 12px 0 0;
 }
 
+.religiousProgramPanel {
+    margin-top: 18px;
+    border: 1px solid rgba(184, 138, 68, 0.22);
+    border-radius: 8px;
+    padding: 16px;
+    background: rgba(255, 253, 249, 0.86);
+}
+
+.religiousProgramPanel .panelHeader {
+    margin-bottom: 14px;
+}
+
+.religiousProgramMoment {
+    border-top: 1px solid rgba(29, 29, 31, 0.1);
+    padding: 14px 0;
+}
+
+.religiousProgramMoment h3 {
+    margin-bottom: 10px;
+    color: var(--wine);
+    font-family: var(--body);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.religiousOptions {
+    display: grid;
+    gap: 8px;
+}
+
+.radioLine {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--ink);
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+
+.radioLine input {
+    width: auto;
+    min-height: auto;
+}
+
+.religiousOther {
+    margin-top: 10px;
+}
+
 h1,
 h2,
 h3,

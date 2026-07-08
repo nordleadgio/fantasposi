@@ -19,6 +19,124 @@ const DATA_FILE =
 const DATABASE_URL =
     process.env.DATABASE_URL || "";
 
+const RELIGIOUS_PROGRAM_MOMENTS = [
+    {
+        key: "groomEntrance",
+        title: "Entrata sposo",
+        options: [
+            "Canone in D di Pachelbel",
+            "Marcia di Elgar (Pomp and Circumstance N.1 Theme)",
+            "Rivers flow in you (Yiruma)",
+            "Altro"
+        ]
+    },
+    {
+        key: "brideEntrance",
+        title: "Entrata sposa",
+        options: [
+            "Canone in D di Pachelbel",
+            "Marcia nuziale di F. Mendelssohn",
+            "Marcia nuziale di Wagner",
+            "Figlia di Sion",
+            "Altro"
+        ]
+    },
+    {
+        key: "gloriaAspersion",
+        title: "Gloria e aspersione",
+        options: [
+            "Gloria Giombini",
+            "Gloria in excelsis deo"
+        ]
+    },
+    {
+        key: "gospel",
+        title: "Canto al Vangelo",
+        options: [
+            "Alleluia, la nostra festa (Alleluia delle lampadine)",
+            "Alleluia, canto per Cristo",
+            "Alleluia, passeranno i cieli"
+        ]
+    },
+    {
+        key: "offertory",
+        title: "Offertorio",
+        options: [
+            "Ecco quel che abbiamo",
+            "Vivere la vita",
+            "Servo per amore"
+        ]
+    },
+    {
+        key: "holy",
+        title: "Santo",
+        options: [
+            "Santo Zaire, Osanna eh",
+            "Santo di Bonfitto",
+            "Santo Gen Rosso, Santo Santo Santo"
+        ]
+    },
+    {
+        key: "ourFather",
+        title: "Padre Nostro",
+        options: [
+            "Padre nostro sulle note di The sound of silence",
+            "Padre nostro Giombini",
+            "Padre nostro classico"
+        ]
+    },
+    {
+        key: "peace",
+        title: "Segno della pace",
+        options: [
+            "Pace nel signore, Pace a te pace a te",
+            "Pace sia pace a voi"
+        ]
+    },
+    {
+        key: "lambOfGod",
+        title: "Agnello di Dio",
+        options: [
+            "Agnello di Dio"
+        ]
+    },
+    {
+        key: "communion",
+        title: "Canto di comunione",
+        options: [
+            "Dolce e sentire, fratello sole",
+            "Te al centro del mio cuore",
+            "Pane del cielo",
+            "Su ali d'aquila",
+            "Tu sei"
+        ]
+    },
+    {
+        key: "signatures",
+        title: "Canto sulle firme",
+        options: [
+            "Ave Maria di Schubert",
+            "Altro"
+        ]
+    },
+    {
+        key: "preCivilClosing",
+        title: "Canto di fine celebrazione pre rito civile se richiesto dal sacerdote",
+        options: [
+            "Resta qui con noi",
+            "Laudato sii",
+            "Figlia di Sion"
+        ]
+    },
+    {
+        key: "exit",
+        title: "Uscita sposi",
+        options: [
+            "Accompagnamento strumentale"
+        ]
+    }
+];
+
 function createInitialState() {
 
     return {
@@ -271,6 +389,76 @@ function createEmptyAnswers() {
 
 }
 
+function createEmptyReligiousProgram() {
+
+    return {
+        confirmed: false,
+        moments: RELIGIOUS_PROGRAM_MOMENTS.map(moment => ({
+            key: moment.key,
+            title: moment.title,
+            selected: "",
+            otherText: ""
+        })),
+        confirmedAt: ""
+    };
+
+}
+
+function cleanReligiousProgram(value) {
+
+    const source =
+        safeObject(value);
+    const sourceMoments =
+        Array.isArray(source.moments) ? source.moments : [];
+    const sourceByKey =
+        new Map(
+            sourceMoments
+                .map(item => safeObject(item))
+                .filter(item => item.key)
+                .map(item => [item.key, item])
+        );
+
+    return {
+        confirmed: cleanBoolean(source.confirmed),
+        moments: RELIGIOUS_PROGRAM_MOMENTS.map(moment => {
+            const selectedSource =
+                safeObject(sourceByKey.get(moment.key));
+            const selected =
+                cleanText(selectedSource.selected, "", 220);
+            const validSelected =
+                moment.options.includes(selected) ? selected : "";
+
+            return {
+                key: moment.key,
+                title: moment.title,
+                selected: validSelected,
+                otherText: cleanLongText(selectedSource.otherText, "", 500)
+            };
+        }),
+        confirmedAt: cleanText(source.confirmedAt, "", 80)
+    };
+
+}
+
+function religiousProgramLines(program) {
+
+    if (!program || !program.confirmed) {
+        return [];
+    }
+
+    return (program.moments || [])
+        .map(moment => {
+            const selected =
+                moment.selected === "Altro" ?
+                    cleanText(moment.otherText, "Altro", 500) :
+                    moment.selected;
+
+            return selected ? `${moment.title}: ${selected}` : "";
+        })
+        .filter(Boolean);
+
+}
+
 function cleanAnswers(value) {
 
     const body =
@@ -296,7 +484,7 @@ function cleanAnswers(value) {
     };
 
     current.ceremony = {
-        type: ["civil", "religious"].includes(ceremony.type) ?
+        type: ["civil", "religious", "noRite"].includes(ceremony.type) ?
             ceremony.type :
             "",
         startTime: cleanText(ceremony.startTime, "", 20),
@@ -367,6 +555,7 @@ function normalizeEvent(event) {
         status: cleanText(source.status, "bozza", 40),
         weddingWorkflowStatus:
             source.weddingWorkflowStatus === "done" ? "done" : "todo",
+        religiousProgram: cleanReligiousProgram(source.religiousProgram),
         adminCeremonyNotes: cleanLongText(source.adminCeremonyNotes, "", 1600),
         adminInternalNotes: cleanLongText(
             source.adminInternalNotes || source.adminCeremonyNotes,
@@ -398,6 +587,10 @@ function publicEvent(event) {
         venue: event.venue,
         introMessage: event.introMessage,
         answers: event.answers,
+        religiousProgram:
+            event.religiousProgram && event.religiousProgram.confirmed ?
+                event.religiousProgram :
+                null,
         status: event.status,
         submittedAt: event.submittedAt
     };
@@ -509,9 +702,14 @@ function summaryLines(event) {
             rows: [
                 ceremony.type === "civil" ? "Rito civile" : "",
                 ceremony.type === "religious" ? "Rito religioso" : "",
+                ceremony.type === "noRite" ? "Rito non richiesto" : "",
                 ceremony.startTime && `Orario inizio rito: ${ceremony.startTime}`,
                 ceremony.type === "religious" && ceremony.churchName && `Chiesa: ${ceremony.churchName}`,
                 ceremony.type === "religious" && ceremony.churchTown && `Paese chiesa: ${ceremony.churchTown}`,
+                ...(event.religiousProgram && event.religiousProgram.confirmed ? [
+                    "Programma rito religioso confermato",
+                    ...religiousProgramLines(event.religiousProgram)
+                ] : []),
                 songLabel("Ingresso sposo", ceremony.groomEntranceSong),
                 ...((ceremony.groomEntranceExtraSongs || []).map((song, index) =>
                     songLabel(`Ingresso sposo - brano aggiuntivo ${index + 1}`, song)
@@ -1032,6 +1230,17 @@ function installWeddingPlanner(app) {
         event.status = cleanText(body.status, event.status, 40);
         event.weddingWorkflowStatus =
             body.weddingWorkflowStatus === "done" ? "done" : "todo";
+        if (body.religiousProgram) {
+            event.religiousProgram =
+                cleanReligiousProgram(body.religiousProgram);
+            if (
+                event.religiousProgram.confirmed &&
+                !event.religiousProgram.confirmedAt
+            ) {
+                event.religiousProgram.confirmedAt =
+                    new Date().toISOString();
+            }
+        }
         event.adminCeremonyNotes =
             cleanLongText(body.adminCeremonyNotes, event.adminCeremonyNotes, 1600);
         event.adminInternalNotes =
