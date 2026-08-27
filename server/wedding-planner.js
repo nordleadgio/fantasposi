@@ -1075,6 +1075,7 @@ function createDatabaseStorage() {
     const pool =
         new Pool({
             connectionString: DATABASE_URL,
+            connectionTimeoutMillis: 10000,
             ssl: {
                 rejectUnauthorized: false
             }
@@ -1197,7 +1198,12 @@ function installWeddingPlanner(app) {
     const storage =
         createStorage();
     const storageReady =
-        storage.init();
+        storage.init().catch(error => {
+            console.error(
+                "Errore inizializzazione Scheda Sposi",
+                error
+            );
+        });
     const adminPassword =
         process.env.FANTASPOSI_ADMIN_PASSWORD || "admin1234@1234";
 
